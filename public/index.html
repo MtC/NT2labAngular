@@ -13,20 +13,19 @@
     <body>
         
         <div role="alert">
-            <i class="fa fa-arrow-up fa-1x"></i><span>{{ alert.message }}</span>
+            <i class="fa fa-arrow-up fa-2x fa-fw"></i><span>{{ alert.message }}</span>
         </div>
         
-        <nav id="main-nav" role="navigation">
+        <nav id="main-nav" role="navigation" ng-controller="NavigationCtrl">
             <ul role="menu">
-                <li role="presentation" ng-show="authenticated()"><a role="presentation"><i class="fa fa-lock fa-2x"></i></a><span>{{'menu.locked' | translate}}</span></li>
-                <li role="presentation"><a role="menuitem" href="#!/{{'lang' | translate}}"><i class="fa fa-home fa-2x"></i></a><span>NT2lab</span></li>
-                <li role="presentation"><a role="menuitem" href="#!/{{'lang' | translate}}/{{'menu.app.url' | translate}}"><i class="fa fa-th-list fa-2x"></i></a><span>{{'menu.app.name' | translate}}</span></li>
-                <li role="presentation"><a role="menuitem" href="#!/{{'lang' | translate}}/{{'menu.options.url' | translate}}"><i class="fa fa-cog fa-2x"></i></a><span>{{'menu.options.name' | translate}}</span></li>
+                <li role="presentation"><a role="menuitem" href="#!/{{'lang' | translate}}"><i class="fa fa-home fa-2x fa-fw"></i></a><span>NT2lab</span></li>
+                <li role="presentation"><a role="menuitem" href="#!/{{'lang' | translate}}/{{'menu.app.url' | translate}}"><i class="fa fa-th-list fa-2x fa-fw"></i></a><span>{{'menu.app.name' | translate}}</span></li>
+                <li role="presentation"><a role="menuitem" href="#!/{{'lang' | translate}}/{{'menu.options.url' | translate}}"><i class="fa fa-cog fa-2x fa-fw"></i></a><span>{{'menu.options.name' | translate}}</span></li>
                 <li role="presentation">
-                    <a role="menuitem" href="#!/{{'lang' | translate}}/{{'menu.user.url' | translate}}"><i class="fa fa-user fa-2x"></i></a><span>{{'menu.user.name' | translate}}</span>
+                    <a role="menuitem" ng-show="isAuthenticated()" href="#!/{{'lang' | translate}}/{{'menu.user.url' | translate}}"><i class="fa fa-user fa-2x fa-fw"></i></a><span>{{'menu.user.name' | translate}}</span>
                 </li>
-                <li role="presentation" ng-show="!isAuthenticated()"><a role="menuitem" href="#!/{{'lang' | translate}}/{{'menu.login.url' | translate}}"><i class="fa fa-unlock fa-2x"></i></a><span>{{'menu.login.name' | translate}}</span></li>
-                <li role="presentation" ng-show="!isAuthenticated()"><a role="menuitem" href="#!/{{'lang' | translate}}/{{'menu.logout.url' | translate}}"><i class="fa fa-lock fa-2x"></i></a><span>{{'menu.logout.name' | translate}}</span></li>
+                <li role="presentation" ng-show="!isAuthenticated()"><a role="menuitem" href="#!/{{'lang' | translate}}/{{'menu.login.url' | translate}}"><i class="fa fa-unlock fa-2x fa-fw"></i></a><span>{{'menu.login.name' | translate}}</span></li>
+                <li role="presentation" ng-show="isAuthenticated()"><a role="menuitem" href ng-click="logout()"><i class="fa fa-lock fa-2x fa-fw"></i></a><span>{{'menu.logout.name' | translate}}</span></li>
             </ul>
         </nav>
         

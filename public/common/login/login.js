@@ -1,17 +1,80 @@
 angular.module('LoginModule',[]).
-    controller('LoginCtrl',['$scope','$http','tokenHandler', function($scope, $http, tokenHandler) {
-        console.log('LoginCtrl');
+    
+    provider('Credentials', function () {
+		var user  = false,
+            error = false,
+            xsrf, role;
+		return {
+			$get: function () {
+				return {
+                    setUser: function (newUser, newRole) {
+                        user = newUser;
+                        role = newRole;
+                        this.setError(false);
+                    },
+                    getUser: function () {
+                        return user;
+                    },
+                    getRole: function () {
+                        return role;
+                    },
+                    isAuthenticated: function () {
+                        return user ? true : false;
+                    },
+                    setError: function (newError) {
+                        error = newError;
+                    },
+                    getError: function () {
+                        return error;
+                    },
+                    isError: function () {
+                        return error ? true : false;
+                    }
+				}
+			}
+		}
+	}).
+    
+    factory('Login', ['Resource', function (Resource) {
+        return Resource('login');
+    }]).
+
+    controller('LoginCtrl',['$scope','Login', 'Credentials', function($scope, Login, Credentials) {
         $scope.loginSubmit = function() {
+            
             var user = $scope.user;
-            $http.post('api/login', {
-                login: user.name,
-                password: user.password
-            }).success(function(json, status, headers, config) {
-                console.log(headers('token'));
-                tokenHandler.set(headers('token'));
-            }).error(function(err) {
-                // Alert if there's an error
-                return alert(err.message || "Zijn alle velden ingevuld?");
-            });
+            Login.post({login: user.name, password: user.password}).then(
+                function (response) {
+                    if (response.error) {
+                        Credentials.setError(response.error);
+                        console.log(Credentials.getError());
+                    } else {
+                        Credentials.setUser(response.user, response.role);
+                        console.log('oke');
+                    }
+                }
+            );
         };
+        
+        $scope.isAuthenticated = function () {
+            return Credentials.isAuthenticated();
+        }
+        
+        $scope.isError = function () {
+            return Credentials.isError();
+        }
+        
+        $scope.getError = function () {
+            return Credentials.getError();
+        }
+    }]).
+    
+    controller('NavigationCtrl', ['$scope', 'Credentials', function($scope, Credentials) {
+        $scope.isAuthenticated = function () {
+            return Credentials.isAuthenticated();
+        }
+		
+		$scope.logout = function () {
+			console.log('logout'); 
+		}
     }]);

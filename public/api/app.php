@@ -116,9 +116,16 @@ $app->get('/lang/:lang', function ($lang) use ($app) {
             'menu.user.name'=> 'my NT2lab',
             'menu.login.url' => 'login',
             'menu.login.name' => 'login page',
+            'menu.logout.url' => 'logout',
+            'menu.logout.name' => 'logout',
             'options.lang.title' => 'Switch language',
             'options.lang.nl' => 'dutch',
-            'options.lang.en' => 'english'],
+            'options.lang.en' => 'english',
+            'login.form.title' => 'Login page',
+            'login.form.name' => 'name',
+            'login.form.password' => 'password',
+            'login.form.submit' => 'submit',
+            'error.bad-request' => 'wrong credentials'],
         'nl'        => [
             'lang' => 'nl',
             'index.index' => 'Home',
@@ -215,7 +222,7 @@ $app->post('/login', function () use ($app) {
         //$app->response()->header('token', 'zotteklap');
         //$app->response()->header('Content-Type', 'application/json');
         //echo \json_encode(['auth' => true]);
-        returnCall(['auth' => true]);
+        returnCall(['user' => 'Michel', 'role' => 'user']);
     } else {
         $app->response()->status(400);
         //$app->response()->header('X-Status-Reason', 'oops');

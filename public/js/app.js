@@ -45,14 +45,21 @@ angular.module('MtClab',['ngRoute','IndexModule','AppsModule','OptionsModule','U
 				});
 			};
 				
-			Resource.add = function (params) {
+			Resource.post = function (params) {
 				return $http.post(urlBase, 
 					JSON.stringify(params), {
 					headers: {'token': Token.get(), 'X-XSRF-TOKEN': XSRF.get()}
-				}).then(function (response) {
-					Token.set(response.headers('token'));
-					return response;
-				});
+				}).then(
+					function (response) {
+						Token.set(response.headers('token'));
+						resp = response.data;
+						resp.error = false;
+						return resp;
+					},
+					function (response) {
+						return {'error' : 'error.bad-request'};
+					}
+				);
 			};
 			
 			Resource.put = function (params) {

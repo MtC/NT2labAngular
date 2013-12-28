@@ -1,3 +1,6 @@
+/**
+ *  Module hoort bij MtClab: MtClab heeft de benodigde Resource-factory, die van $http een soort $resource maakt
+ */
 angular.module('OptionsModule',['MtClab']).
 
     factory('ToDo', ['Resource', function (Resource) {
@@ -5,7 +8,7 @@ angular.module('OptionsModule',['MtClab']).
     }]).
     
     controller('OptionsCtrl', []).
-    controller('TodoCtrl', [ '$scope', 'ToDo', '$http', 'tokenHandler', function($scope, ToDo, $http, tokenHandler) {
+    controller('TodoCtrl', [ '$scope', 'ToDo', function ($scope, ToDo) {
         $scope.todos = [];
         
         ToDo.query().then(function (todos) {
@@ -15,7 +18,7 @@ angular.module('OptionsModule',['MtClab']).
         $scope.addTodo = function (name, description, doneBy, priority) {
             console.log(name +':' + description + ':' + doneBy + ':' + priority);
             /*
-            ToDo.add({name: name}).then(function (todo) {
+            ToDo.post({name: name}).then(function (todo) {
                 $scope.todos.push(todo.data[0]);
             });
             */
