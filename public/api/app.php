@@ -56,8 +56,9 @@ function returnCall($response) {
         //create token and place in database
         $token = 'authenticated';
     } else {
-        $token = 'false';
-    }
+        $token = 'pipo';
+        $app->response()->header('X-XSRF-TOKEN', '$xsrf');
+    }   
     $app->response()->header('token', $token);
     $app->response()->header('Content-Type', 'application/json');
     echo json_encode($response);

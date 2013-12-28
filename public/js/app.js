@@ -23,7 +23,7 @@ angular.module('MtClab',['ngRoute','IndexModule','AppsModule','OptionsModule','U
 		}
 	}).
 	
-	factory('Resource', ['$http', 'Token', function ($http, Token) {
+	factory('Resource', ['$http', 'Token', 'XSRF', function ($http, Token, XSRF) {
 		return function (rest) {
 			var urlBase		= '/public/api/' + rest,
 				urlId,
@@ -40,6 +40,7 @@ angular.module('MtClab',['ngRoute','IndexModule','AppsModule','OptionsModule','U
 					headers: {'token': Token.get()}
 				}).then(function (response) {
 					Token.set(response.headers('token'));
+					if (response.headers('X-XSRF-TOKEN')) XSRF.set(response.headers('X-XSRF-TOKEN'));
 					return response;
 				});
 			};
@@ -47,7 +48,7 @@ angular.module('MtClab',['ngRoute','IndexModule','AppsModule','OptionsModule','U
 			Resource.add = function (params) {
 				return $http.post(urlBase, 
 					JSON.stringify(params), {
-					headers: {'token': Token.get()}
+					headers: {'token': Token.get(), 'X-XSRF-TOKEN': XSRF.get()}
 				}).then(function (response) {
 					Token.set(response.headers('token'));
 					return response;
@@ -58,7 +59,8 @@ angular.module('MtClab',['ngRoute','IndexModule','AppsModule','OptionsModule','U
 				url = urlBase + '/' + urlId;
 				return $http.put(url, 
 					JSON.stringify(params), {
-					headers: {'token': Token.get()}
+					headers: {'token': Token.get(), 'X-XSRF-TOKEN': XSRF.get()}
+					
 				}).then(
 					function (response) {
 						Token.set(response.headers('token'));
@@ -72,7 +74,7 @@ angular.module('MtClab',['ngRoute','IndexModule','AppsModule','OptionsModule','U
 
 	factory('tokenHandler', function() {
 		var tokenHandler = {},
-			sToken = 'false';
+			sToken;
 		tokenHandler.set = function (newToken) {
 			sToken = newToken;
 		};
@@ -84,7 +86,7 @@ angular.module('MtClab',['ngRoute','IndexModule','AppsModule','OptionsModule','U
 	
 	factory('Token', function() {
 		var Token = {},
-			sToken = 'false';
+			sToken;
 		Token.set = function (newToken) {
 			sToken = newToken;
 		};
@@ -92,6 +94,18 @@ angular.module('MtClab',['ngRoute','IndexModule','AppsModule','OptionsModule','U
 			return sToken;
 		};	
 		return Token;
+	}).
+	
+	factory('XSRF', function() {
+		var XSRF = {},
+			sXSRF = '';
+		XSRF.set = function (newXSRF) {
+			sXSRF = newXSRF;
+		};
+		XSRF.get = function () {
+			return sXSRF;
+		};	
+		return XSRF;
 	}).
 	
 	factory('menuFactory', function() {
