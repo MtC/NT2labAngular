@@ -1,0 +1,16 @@
+<section>
+    <h1>Apps</h1>
+    <input type="text" ng-model="searchString" placeholder="Enter your search terms" />
+    <table>
+        <tbody>
+            <tr data-ng-repeat="app in apps | searchFor:searchString">
+                    <td><a ng-href="#!/app/{{ app.id }}">kies</a></td>
+                    <td>{{ app.name }}</td>
+                    <td>{{ app.date_added }}</td>
+                    <td>{{ app.date_updated }}</td>
+                    <td>{{ app.priority }}</td>
+                    <td>{{ app.category_id }}</td>
+            </tr>
+        </tbody>
+    </table>
+</section>

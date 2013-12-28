@@ -1,0 +1,43 @@
+<section ng-controller="TodoCtrl" ng-cloak>
+    <h1>ToDo</h1>
+    <p id="empty" ng-hide="todos.length > 0">{{'todo.nothingToDo' | translate}}</p>
+    <table width="90%">
+        <thead>
+            <tr>
+                <th width="5%"><i class="fa fa-1x fa-check-square-o"></i></th>
+                <th width="70%">{{'todo.list.todo' | translate}}</th>
+                <th width="10%">{{'todo.list.added' | translate}}</th>
+                <th width="10%">{{'todo.list.done_by' | translate}}</th>
+                <th width="5%">{{'todo.list.priority' | translate}}</th>
+                <th width="5%"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="todo in todos | orderBy:'name'">
+                <td>
+                    <span ng-click="todoOnOff(todo, 'done')">
+                        <i ng-hide="todo.done" class="fa fa-1x fa-square-o"></i>
+                        <i ng-show="todo.done" class="fa fa-1x fa-check-square-o"></i>
+                    </span>
+                </td>
+                <td>{{todo.name}}</td>
+                <td>{{todo.added}}</td>
+                <td>{{todo.done_by}}</td>
+                <td>
+                    <span ng-click="todoOnOff(todo, 'priority')">
+                        <i ng-hide="todo.priority" class="fa fa-1x fa-circle-o"></i>
+                        <i ng-show="todo.priority" class="fa fa-1x fa-exclamation-circle"></i>
+                    </span>
+                </td>
+                <td><i class="fa fa-1x fa-archive" ng-click="todoOnOff(todo,'removed')"></i></td>
+            </tr>
+        </tbody>
+    </table>
+    <form>
+      <input type="text" ng-model="newTodoName" placeholder="todo" /><br />
+      <textarea ng-model="newTodoDescription" placeholder="{{'todo.priority' | translate}}"></textarea><br />
+      <input type="date" ng-model="newTodoDoneBy" placeholder="" /><br />
+      <input type="checkbox" ng-model="newTodoPriority" />
+      <button ng-click="addTodo(newTodoName, newTodoDescription, newTodoDoneBy, newTodoPriority)"><i class="fa fa-1x fa-plus"> toevoegen</i></button>
+    </form>
+</section>

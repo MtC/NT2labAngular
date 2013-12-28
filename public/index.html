@@ -1,0 +1,62 @@
+<!doctype html>
+<html data-ng-app="MtClab">
+    <head>
+        <meta Content-Type: text/html; charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+        <title>NT2lab</title>
+        <link href="http://fonts.googleapis.com/css?family=Ubuntu:500|Open+Sans" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="css/main.css" />
+        <!--<link rel="stylesheet" href="css/persona-buttons.css" />-->
+        <link rel="stylesheet" href="css/font-awesome.css">
+    </head>
+    <body>
+        
+        <div role="alert">
+            <i class="fa fa-arrow-up fa-1x"></i><span>{{ alert.message }}</span>
+        </div>
+        
+        <nav id="main-nav" role="navigation">
+            <ul role="menu">
+                <li role="presentation"><a role="menuitem" href="#!/{{'lang' | translate}}"><i class="fa fa-home fa-1x"></i></a><span>NT2lab</span></li>
+                <li role="presentation"><a role="menuitem" href="#!/{{'lang' | translate}}/{{'menu.app.url' | translate}}"><i class="fa fa-th-list fa-1x"></i></a><span>{{'menu.app.name' | translate}}</span></li>
+                <li role="presentation"><a role="menuitem" href="#!/{{'lang' | translate}}/{{'menu.options.url' | translate}}"><i class="fa fa-cog fa-1x"></i></a><span>{{'menu.options.name' | translate}}</span></li>
+                <li role="presentation">
+                    <a role="menuitem" href="#!/{{'lang' | translate}}/{{'menu.user.url' | translate}}"><i class="fa fa-user fa-1x"></i></a><span>{{'menu.user.name' | translate}}</span>
+                </li>
+                <li role="presentation"><a role="menuitem" href="#!/{{'lang' | translate}}/{{'menu.login.url' | translate}}"><i class="fa fa-key fa-1x"></i></a><span>{{'menu.login.name' | translate}}</span></li>
+            </ul>
+        </nav>
+        
+        <div id="wrapper">
+            
+            <header>
+                <img class="svg-logo-large" src="img/logo_xl.svg" alt="logo" />
+                <div role="heading">
+                    <h1>NT2lab</h1>
+                    <h1>maakt het leren van Nederlands voor student en docent tot een spel.</h1>
+                    <h2>Neem een voorproefje, proef een app of grijp een cocktail.</h2>
+                </div>
+            </header>
+            
+            <div role="main" data-ng-view></div>
+            
+        </div>
+        <!--<script src="https://login.persona.org/include.js"></script>-->
+        <script src="js/vendor/angular.js"></script>
+        <script src="js/vendor/angular-resource.min.js"></script>
+        <script src="js/vendor/angular-route.min.js"></script>
+        <script src="js/vendor/angular-translate.min.js"></script>
+        <script src="js/php.js"></script>
+        <script src="js/app.js"></script>
+        <!--<script src="js/providers.js"></script>-->
+        <script src="js/services.js"></script>
+        <!--<script src="js/factories.js"></script>
+        <script src="js/controllers.js"></script>-->
+        <script src="common/index/index.js"></script>
+        <script src="common/apps/apps.js"></script>
+        <script src="common/options/options.js"></script>
+        <script src="common/user/user.js"></script>
+        <script src="common/login/login.js"></script>
+  </body>
+</html>

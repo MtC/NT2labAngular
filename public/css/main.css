@@ -1,0 +1,698 @@
+/* 
+    Created on : 3-dec-2013, 19:45:47
+    Author     : Michel Koks <michel@nt2lab.nl>
+*/
+
+/* line 2, E:/web/prepros/gems/gems/neat-1.4.0/app/assets/stylesheets/grid/_grid.scss */
+
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/*! normalize.css v1.0.0 | MIT License | git.io/normalize */
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+nav,
+section,
+summary {
+  display: block;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+audio,
+canvas,
+video {
+  display: inline-block;
+  *display: inline;
+  *zoom: 1;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+audio:not([controls]) {
+  display: none;
+  height: 0;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+[hidden] {
+  display: none;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+html {
+  font-size: 100%;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+html,
+button,
+input,
+select,
+textarea {
+  font-family: sans-serif;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+body {
+  margin: 0;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+a:focus {
+  outline: thin dotted;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+a:active,
+a:hover {
+  outline: 0;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+h1 {
+  font-size: 2em;
+  margin: .67em 0;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+h2 {
+  font-size: 1.5em;
+  margin: .83em 0;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+h3 {
+  font-size: 1.17em;
+  margin: 1em 0;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+h4 {
+  font-size: 1em;
+  margin: 1.33em 0;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+h5 {
+  font-size: .83em;
+  margin: 1.67em 0;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+h6 {
+  font-size: .75em;
+  margin: 2.33em 0;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+abbr[title] {
+  border-bottom: 1px dotted;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+b,
+strong {
+  font-weight: bold;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+blockquote {
+  margin: 1em 40px;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+dfn {
+  font-style: italic;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+mark {
+  background: #ff0;
+  color: #000;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+p,
+pre {
+  margin: 1em 0;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+code,
+kbd,
+pre,
+samp {
+  font-family: monospace,serif;
+  _font-family: 'courier new',monospace;
+  font-size: 1em;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+pre {
+  white-space: pre;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+q {
+  quotes: none;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+q:before,
+q:after {
+  content: '';
+  content: none;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+small {
+  font-size: 75%;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+sup {
+  top: -0.5em;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+sub {
+  bottom: -0.25em;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+dl,
+menu,
+ol,
+ul {
+  margin: 1em 0;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+dd {
+  margin: 0 0 0 40px;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+menu,
+ol,
+ul {
+  padding: 0 0 0 40px;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+nav ul,
+nav ol {
+  list-style: none;
+  list-style-image: none;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+img {
+  border: 0;
+  -ms-interpolation-mode: bicubic;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+svg:not(:root) {
+  overflow: hidden;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+figure {
+  margin: 0;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+form {
+  margin: 0;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+fieldset {
+  border: 1px solid #c0c0c0;
+  margin: 0 2px;
+  padding: .35em .625em .75em;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+legend {
+  border: 0;
+  padding: 0;
+  white-space: normal;
+  *margin-left: -7px;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+button,
+input,
+select,
+textarea {
+  font-size: 100%;
+  margin: 0;
+  vertical-align: baseline;
+  *vertical-align: middle;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+button,
+input {
+  line-height: normal;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+button,
+html input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+  -webkit-appearance: button;
+  cursor: pointer;
+  *overflow: visible;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+button[disabled],
+input[disabled] {
+  cursor: default;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+input[type="checkbox"],
+input[type="radio"] {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 0;
+  *height: 13px;
+  *width: 13px;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+input[type="search"] {
+  -webkit-appearance: textfield;
+  -moz-box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+textarea {
+  overflow: auto;
+  vertical-align: top;
+}
+
+/* line 2, E:/www/scss/scss/partials/../vendor/normalize/_normalize.scss */
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* line 11, E:/www/scss/scss/partials/_lists.scss */
+
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* line 8, ../../scss/main.scss */
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+/* line 13, ../../scss/main.scss */
+
+html {
+  font-size: 10 px;
+}
+
+/* line 17, ../../scss/main.scss */
+
+body {
+  font-family: 'Open Sans', Arial, sans-serif;
+}
+
+/* line 21, ../../scss/main.scss */
+
+[role="alert"] {
+  position: fixed;
+  top: -40px;
+  height: 40px;
+  width: 100%;
+  padding: 0.5rem;
+  background-color: #30beff;
+  color: white;
+  -webkit-transition: all 0.7s ease-in-out;
+  transition: all 0.7s ease-in-out;
+}
+
+/* line 31, ../../scss/main.scss */
+
+[role="alert"].alert {
+  top: 0;
+  -webkit-transition: all 0.7s ease-in-out;
+  transition: all 0.7s ease-in-out;
+}
+
+/* line 35, ../../scss/main.scss */
+
+[role="alert"] i,
+[role="alert"] span {
+  cursor: default;
+}
+
+/* line 38, ../../scss/main.scss */
+
+[role="alert"] span {
+  display: block;
+  margin-top: -20px;
+  *zoom: 1;
+  max-width: 68em;
+  margin-left: auto;
+  margin-right: auto;
+  margin-left: 20px;
+  margin-left: 2rem;
+}
+
+/* line 18, E:/web/prepros/gems/gems/bourbon-3.1.8/app/assets/stylesheets/addons/_clearfix.scss */
+
+[role="alert"] span:before,
+[role="alert"] span:after {
+  content: " ";
+  display: table;
+}
+
+/* line 23, E:/web/prepros/gems/gems/bourbon-3.1.8/app/assets/stylesheets/addons/_clearfix.scss */
+
+[role="alert"] span:after {
+  clear: both;
+}
+
+/* line 46, ../../scss/main.scss */
+
+nav {
+  position: fixed;
+  left: 0;
+  top: 25px;
+  top: 2.5rem;
+}
+
+/* line 53, ../../scss/main.scss */
+
+nav li {
+  padding: 0;
+  margin: 3px 0;
+  margin: 0.3rem 0;
+}
+
+/* line 57, ../../scss/main.scss */
+
+nav a {
+  display: block;
+  color: white;
+  background-color: #30beff;
+  border-left: 5px solid white;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  font-size: 10px;
+  font-size: 1rem;
+  height: 24px;
+  height: 2.4rem;
+  padding: 6px 6px 0 6px;
+  padding: 0.6rem 0.6rem 0 0.6rem;
+}
+
+/* line 67, ../../scss/main.scss */
+
+nav a:hover + span {
+  left: 25px;
+  left: 2.5rem;
+  -webkit-transition: all 0.7s ease-in-out;
+  transition: all 0.7s ease-in-out;
+}
+
+/* line 71, ../../scss/main.scss */
+
+nav span {
+  position: absolute;
+  display: block;
+  background-color: #30beff;
+  white-space: nowrap;
+  color: white;
+  font-family: 'Open Sans', Arial, sans-serif;
+  border-left: 5px solid white;
+  z-index: -1;
+  height: 24px;
+  height: 2.4rem;
+  left: -100px;
+  left: -10rem;
+  margin-top: -24px;
+  margin-top: -2.4rem;
+  padding: 3.6px 5px 0 5px;
+  padding: 0.36rem 0.5rem 0 0.5rem;
+  font-size: 12px;
+  font-size: 1.2rem;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-transition: all 0.7s ease-in-out;
+  transition: all 0.7s ease-in-out;
+}
+
+/* line 90, ../../scss/main.scss */
+
+#wrapper {
+  *zoom: 1;
+  max-width: 68em;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 30px 10px 0 28px;
+  padding: 3rem 1rem 0 2.8rem;
+}
+
+/* line 18, E:/web/prepros/gems/gems/bourbon-3.1.8/app/assets/stylesheets/addons/_clearfix.scss */
+
+#wrapper:before,
+#wrapper:after {
+  content: " ";
+  display: table;
+}
+
+/* line 23, E:/web/prepros/gems/gems/bourbon-3.1.8/app/assets/stylesheets/addons/_clearfix.scss */
+
+#wrapper:after {
+  clear: both;
+}
+
+/* line 95, ../../scss/main.scss */
+
+header,
+[role="main"] {
+  display: block;
+  float: left;
+  margin-right: 2.35765%;
+  width: 100%;
+}
+
+/* line 33, E:/web/prepros/gems/gems/neat-1.4.0/app/assets/stylesheets/grid/_span-columns.scss */
+
+header:last-child,
+[role="main"]:last-child {
+  margin-right: 0;
+}
+
+/* line 100, ../../scss/main.scss */
+
+header img {
+  display: block;
+  float: left;
+  margin-right: 2.35765%;
+  width: 14.70196%;
+}
+
+/* line 33, E:/web/prepros/gems/gems/neat-1.4.0/app/assets/stylesheets/grid/_span-columns.scss */
+
+header img:last-child {
+  margin-right: 0;
+}
+
+/* line 103, ../../scss/main.scss */
+
+header div {
+  display: block;
+  float: left;
+  margin-right: 2.35765%;
+  width: 82.94039%;
+  margin-right: 0;
+  background-color: white;
+}
+
+/* line 33, E:/web/prepros/gems/gems/neat-1.4.0/app/assets/stylesheets/grid/_span-columns.scss */
+
+header div:last-child {
+  margin-right: 0;
+}
+
+/* line 107, ../../scss/main.scss */
+
+header div h1:first-child {
+  margin: 0 1rem 0 0;
+  color: #ff7130;
+  float: left;
+  display: none;
+  font-size: 30px;
+  font-size: 3rem;
+}
+
+/* line 114, ../../scss/main.scss */
+
+header div h1 {
+  color: #ff7130;
+  font-family: Ubuntu, Arial, sans-serif;
+  margin: 0 0 0 0;
+  font-size: 22px;
+  font-size: 2.2rem;
+  line-height: 20px;
+  line-height: 2rem;
+}
+
+/* line 120, ../../scss/main.scss */
+
+header div h2 {
+  color: #ff7130;
+  margin: 0;
+  font-size: 16px;
+  font-size: 1.6rem;
+}
+
+/* line 128, ../../scss/main.scss */
+
+section {
+  background-color: #c9eeff;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 20px 0;
+  margin: 2rem 0;
+  padding: 5px 20px;
+  padding: 0.5rem 2rem;
+}
+
+/* line 133, ../../scss/main.scss */
+
+section:before {
+  content: '';
+  position: relative;
+  float: right;
+  background-color: #30beff;
+  z-index: -1;
+  width: 100px;
+  width: 10rem;
+  height: 50px;
+  height: 5rem;
+  margin: -10px -25px 0 0;
+  margin: -1rem -2.5rem 0 0;
+}
+
+/* line 143, ../../scss/main.scss */
+
+section:after {
+  content: '';
+  position: absolute;
+  background-color: #30beff;
+  z-index: -1;
+  width: 100px;
+  width: 10rem;
+  height: 50px;
+  height: 5rem;
+  margin: -40px 0 0 -25px;
+  margin: -4rem 0 0 -2.5rem;
+}

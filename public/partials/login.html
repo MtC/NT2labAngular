@@ -1,0 +1,16 @@
+<section>
+    <h1>{{'login.form.title' | translate}}</h1>
+    <form data-ng-controller="LoginCtrl">
+        <input type="text" name="login" data-ng-model="user.name" placeholder="{{'login.form.name' | translate}}" required="required" /><br />
+        <input type="password" name="password" data-ng-model="user.password" placeholder="{{'login.form.password' | translate}}" required="required" /><br />
+        <button data-ng-click="loginSubmit()">{{'login.form.submit' | translate}}</button>
+    </form>
+    <!--
+    <p>{{'login.form.or' | translate}}</p>
+    <p data-ng-controller="PersonaCtrl">
+        <span  data-ng-click="login();" class="persona-button dark"><span>{{'login.persona.login' | translate}}</span></span>
+        <span  data-ng-click="logout();" class="persona-button dark"><span>{{'login.persona.logout' | translate}}</span></span>
+    </p>
+    <span class="mtc-information">{{'login.persona.explanation' | translate}}</span>
+    -->
+</section>
