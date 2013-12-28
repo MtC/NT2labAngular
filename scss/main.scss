@@ -1,0 +1,152 @@
+/* 
+    Created on : 3-dec-2013, 19:45:47
+    Author     : Michel Koks <michel@nt2lab.nl>
+*/
+
+@import "partials/partials";
+
+html, body {
+    width: 100%;
+    height: 100%;
+}
+
+html {
+    font-size: $base-rem px;
+}
+
+body {
+    font-family: 'Open Sans', Arial, sans-serif;
+}
+
+[role="alert"] {
+    position: fixed;
+    top: -40px;
+    height: 40px;
+    width: 100%;
+    padding: 0.5rem;
+    background-color: $main-opposite-color;
+    color: white;
+    @include transition(all 0.7s ease-in-out);
+    
+    &.alert {
+        top: 0;
+        @include transition(all 0.7s ease-in-out);
+    }
+    i, span {
+        cursor: default;
+    }
+    span {
+        display: block;
+        margin-top: -20px;
+        @include outer-container();
+        @include mtc-rem(margin-left, 2);
+    }
+}
+
+nav {
+    position: fixed;
+    left: 0;
+    @include mtc-rem(top, 2.5);
+    ul {
+        @extend %mtc-list-unstyled;
+    }
+    li {
+        padding: 0;
+        @include mtc-rem(margin, 0.3 0);
+    }
+    a {
+        display: block;
+        color: $nav-color;
+        background-color: $nav-bg-color;
+        border-left: 5px solid white;
+        @include box-sizing(border-box);
+        @include mtc-rem(font-size, 1);
+        @include mtc-rem(height, $nav-height);
+        @include mtc-rem(padding, ($nav-height * 0.25) 0.6 0 0.6);
+    }
+    a:hover + span {
+        @include mtc-rem(left, 2.5);
+        @include transition(all 0.7s ease-in-out);
+    }
+    span {
+        position: absolute;
+        display: block;
+        background-color: $main-opposite-color;
+        white-space: nowrap;
+        color: white;
+        font-family: 'Open Sans', Arial, sans-serif;
+        border-left: 5px solid white;
+        z-index: -1;
+        @include mtc-rem(height, $nav-height);
+        @include mtc-rem(left, -10);
+        @include mtc-rem(margin-top, -$nav-height);
+        @include mtc-rem(padding, ($nav-height * 0.15) 0.5 0 0.5);
+        @include mtc-rem(font-size, 1.2);
+        @include box-sizing(border-box);
+        @include transition(all 0.7s ease-in-out);
+    }
+}
+
+#wrapper {
+    @include outer-container();
+    @include mtc-rem(padding, 3 1 0 2.8);
+}
+
+header, [role="main"] {
+    @include span-columns(12);
+}
+
+header {
+    img {
+        @include span-columns(2);
+    } 
+    div {
+        @include span-columns(10);
+        @include omega();
+        background-color: white;
+        h1:first-child {
+            margin: 0 1rem 0 0;
+            color: $main-draw-color;
+            float: left;
+            display: none;
+            @include mtc-rem(font-size, 3);
+        }
+        h1 {
+            color: $main-draw-color;
+            font-family: Ubuntu, Arial, sans-serif;
+            margin: 0 0 0 0;
+            @include mtc-font-size(2.2, 2);
+        }
+        h2 {
+            color: $main-draw-color;
+            margin: 0;
+            @include mtc-rem(font-size, 1.6);
+        }
+    }
+}
+
+section {
+    background-color: lighten($main-opposite-color, 30%);
+    @include box-sizing(border-box);
+    @include mtc-rem(margin, 2 0);
+    @include mtc-rem(padding, 0.5 2);
+    &:before {
+        content: '';
+        position: relative;
+        float: right;
+        background-color: $main-opposite-color;
+        z-index: -1;
+        @include mtc-rem(width, 10);
+        @include mtc-rem(height, 5);
+        @include mtc-rem(margin, -1 -2.5 0 0);
+    }
+    &:after {
+        content: '';
+        position: absolute;
+        background-color: $main-opposite-color;
+        z-index: -1;
+        @include mtc-rem(width, 10);
+        @include mtc-rem(height, 5);
+        @include mtc-rem(margin, -4 0 0 -2.5);
+    }
+}
