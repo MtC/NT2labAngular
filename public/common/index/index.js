@@ -1,17 +1,23 @@
 angular.module('IndexModule',[]).
-    controller('IndexCtrl', ['$scope', '$http', '$route', '$translate', 'tokenHandler', 'menuFactory', 'language', function($scope, $http, $route, $translate, tokenHandler, menuFactory, language) {
-    if (language.getLanguage() !== $route.current.pathParams.lang) {
-        $http.get('api/lang/' + $route.current.pathParams.lang, { headers: {'token': tokenHandler.get()}})
-        .success(function(langs, status, headers, config) {
-            tokenHandler.set(headers('token'));
-            //console.log(headers('token'));
-            $translateProviderReference.translations(langs.lang, langs);
-            $scope.$on('$routeChangeSuccess', function() {
-                $translate.uses(langs.lang);
-            });
-            menuFactory.set(langs.urlCheck);
-            language.setLanguage(langs.lang);
-            $translate.uses(language.getLanguage());
-        });
+
+    factory('Index', ['Resource', function (Resource) {
+        return Resource('lang');
+    }]).
+
+    controller('IndexCtrl', ['$scope', '$http', '$route', '$translate', 'Token', 'menuFactory', 'Language', 'Index', function($scope, $http, $route, $translate, Token, menuFactory, Language, Index) {
+    if (Language.getLanguage() !== $route.current.pathParams.lang) {
+        console.log($route.current.pathParams.lang);
+        Index.setId($route.current.pathParams.lang);
+        Index.get().then(
+            function (response) {
+                $translateProviderReference.translations(response.data.lang, response.data);
+                $scope.$on('$routeChangeSuccess', function() {
+                    $translate.uses(response.data.lang);
+                });
+                menuFactory.set(response.data.urlCheck);
+                Language.setLanguage(response.data.lang);
+                $translate.uses(Language.getLanguage());
+            }
+        );
     }
 }]);

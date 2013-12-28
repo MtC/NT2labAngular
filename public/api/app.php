@@ -112,6 +112,11 @@ $app->get('/lang/:lang', function ($lang) use ($app) {
             'todo.list.added' => 'added',
             'todo.list.done_by' => 'done by',
             'todo.list.priority' => 'priority',
+            'todo.form.title' => 'Add item',
+            'todo.form.todo' => 'toDo',
+            'todo.form.description' => 'description',
+            'todo.form.doneBy' => 'done by',
+            'todo.form.priority' => 'has priority',
             'menu.user.url' => 'my-nt2lab',
             'menu.user.name'=> 'my NT2lab',
             'menu.login.url' => 'login',
@@ -262,10 +267,11 @@ $app->post('/todo', function () use ($app) {
 
         // store article record
         $_oDB = \R::dispense('todo');
-        $_oDB->name         = (string)$input->name;
+        $_oDB->name         = (string)$input->todo;
+        $_oDB->description  = isset($input->description) ? $input->description : '';
         $_oDB->added        = date('Y-m-d',time());
-        //$_oDB->priority     = (int)$input->priority;
-        //$_oDB->done_by      = (string)$input->done_by;
+        $_oDB->priority     = isset($input->priority) ? $input->priority : 0;
+        $_oDB->done_by      = $input->doneBy;
         $id = \R::store($_oDB);    
         
         $_oDB = R::getAll('SELECT * FROM todo WHERE id = ?', [$id]);

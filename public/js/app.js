@@ -1,12 +1,12 @@
-angular.module('MtClab',['ngRoute','IndexModule','AppsModule','OptionsModule','UserModule','LoginModule','pascalprecht.translate']).
+angular.module('MtClab',['ngRoute','ResourceModule','LanguageModule','NavigationModule','IndexModule','AppsModule','OptionsModule','UserModule','LoginModule'/*,'pascalprecht.translate'*/]).
 	
-	config(function($routeProvider, $locationProvider, $translateProvider) {
+	config(function($routeProvider, $locationProvider/*, $translateProvider*/) {
         $routeProviderReference = $routeProvider;
-        $translateProviderReference = $translateProvider;
+        //$translateProviderReference = $translateProvider;
         $locationProvider.html5Mode(false);
         $locationProvider.hashPrefix('!');
     }).
-	
+	/*
 	provider('language', function () {
 		var sLanguage = 'nl';
 		return {
@@ -22,63 +22,8 @@ angular.module('MtClab',['ngRoute','IndexModule','AppsModule','OptionsModule','U
 			}
 		}
 	}).
-	
-	factory('Resource', ['$http', 'Token', 'XSRF', function ($http, Token, XSRF) {
-		return function (rest) {
-			var urlBase		= '/public/api/' + rest,
-				urlId,
-				Resource = function (data) {
-					angular.extend(this, data);
-				};
-				
-			Resource.setId = function (id) {
-				urlId = id;
-			}
-				
-			Resource.query = function () {
-				return $http.get(urlBase, {
-					headers: {'token': Token.get()}
-				}).then(function (response) {
-					Token.set(response.headers('token'));
-					if (response.headers('X-XSRF-TOKEN')) XSRF.set(response.headers('X-XSRF-TOKEN'));
-					return response;
-				});
-			};
-				
-			Resource.post = function (params) {
-				return $http.post(urlBase, 
-					JSON.stringify(params), {
-					headers: {'token': Token.get(), 'X-XSRF-TOKEN': XSRF.get()}
-				}).then(
-					function (response) {
-						Token.set(response.headers('token'));
-						resp = response.data;
-						resp.error = false;
-						return resp;
-					},
-					function (response) {
-						return {'error' : 'error.bad-request'};
-					}
-				);
-			};
-			
-			Resource.put = function (params) {
-				url = urlBase + '/' + urlId;
-				return $http.put(url, 
-					JSON.stringify(params), {
-					headers: {'token': Token.get(), 'X-XSRF-TOKEN': XSRF.get()}
-					
-				}).then(
-					function (response) {
-						Token.set(response.headers('token'));
-						return response;
-					});
-			};
-			
-			return Resource;
-		}
-	}]).
-
+	*/
+/*
 	factory('tokenHandler', function() {
 		var tokenHandler = {},
 			sToken;
@@ -90,31 +35,7 @@ angular.module('MtClab',['ngRoute','IndexModule','AppsModule','OptionsModule','U
 		};	
 		return tokenHandler;
 	}).
-	
-	factory('Token', function() {
-		var Token = {},
-			sToken;
-		Token.set = function (newToken) {
-			sToken = newToken;
-		};
-		Token.get = function () {
-			return sToken;
-		};	
-		return Token;
-	}).
-	
-	factory('XSRF', function() {
-		var XSRF = {},
-			sXSRF = '';
-		XSRF.set = function (newXSRF) {
-			sXSRF = newXSRF;
-		};
-		XSRF.get = function () {
-			return sXSRF;
-		};	
-		return XSRF;
-	}).
-	
+*/	
 	factory('menuFactory', function() {
 		var menuFactory = {},
 			menu = {};
@@ -150,7 +71,7 @@ angular.module('MtClab',['ngRoute','IndexModule','AppsModule','OptionsModule','U
 		};
 	}]).
 
-	run(['$rootScope', '$location', 'tokenHandler', 'menuFactory', 'language', function($rootScope, $location, tokenHandler, menuFactory, language) {
+	run(['$rootScope', '$location', 'Token', 'menuFactory', 'Language', function($rootScope, $location, Token, menuFactory, Language) {
 	var tempCtrl;
 	
 	$rootScope.$on( "$routeChangeStart", function(event, next, current) {
@@ -186,7 +107,7 @@ angular.module('MtClab',['ngRoute','IndexModule','AppsModule','OptionsModule','U
 		
 		when('/:lang/:option/:action', {
 			templateUrl: function(url) {
-				if (!language.getLanguage() || language.getLanguage() !== url.lang) {
+				if (!Language.getLanguage() || Language.getLanguage() !== url.lang) {
                     $location.path( url.lang );
                 } else {               
                     var urls = menuFactory.get();

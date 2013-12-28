@@ -1,7 +1,7 @@
 /**
  *  Module hoort bij MtClab: MtClab heeft de benodigde Resource-factory, die van $http een soort $resource maakt
  */
-angular.module('OptionsModule',['MtClab']).
+angular.module('OptionsModule',[]).
 
     factory('ToDo', ['Resource', function (Resource) {
         return Resource('todo');
@@ -17,11 +17,19 @@ angular.module('OptionsModule',['MtClab']).
         
         $scope.addTodo = function (name, description, doneBy, priority) {
             console.log(name +':' + description + ':' + doneBy + ':' + priority);
-            /*
+            
             ToDo.post({name: name}).then(function (todo) {
                 $scope.todos.push(todo.data[0]);
             });
-            */
+            
+        };
+        
+        $scope.submitForm = function (todo) {
+            console.log(todo);
+            ToDo.post(todo).then(function (todo) {
+                console.log(todo);
+                //$scope.todos.push(todo.data[0]);
+            });
         };
         
         $scope.todoOnOff = function (todo, action) {
@@ -39,5 +47,10 @@ angular.module('OptionsModule',['MtClab']).
                     $scope.todos[$scope.todos.indexOf(todo)].done = response.data.done;
                 });
             }
-          };     
-        }]);
+        };
+
+        $scope.canSave = function () {
+            return $scope.formTodo.$valid;
+        };
+        
+    }]);

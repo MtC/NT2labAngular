@@ -49,7 +49,7 @@ angular.module('LoginModule',[]).
                         Credentials.setError(response.error);
                         console.log(Credentials.getError());
                     } else {
-                        Credentials.setUser(response.user, response.role);
+                        Credentials.setUser(response.data.user, response.data.role);
                         console.log('oke');
                     }
                 }
@@ -67,14 +67,4 @@ angular.module('LoginModule',[]).
         $scope.getError = function () {
             return Credentials.getError();
         }
-    }]).
-    
-    controller('NavigationCtrl', ['$scope', 'Credentials', function($scope, Credentials) {
-        $scope.isAuthenticated = function () {
-            return Credentials.isAuthenticated();
-        }
-		
-		$scope.logout = function () {
-			console.log('logout'); 
-		}
     }]);
