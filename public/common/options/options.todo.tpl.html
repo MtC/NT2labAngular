@@ -1,26 +1,31 @@
 <section ng-controller="TodoCtrl" ng-cloak>
-    <h1>ToDo</h1>
-    <p id="empty" ng-hide="todos.length > 0">{{'todo.nothingToDo' | translate}}</p>
-    <table width="90%">
+    <h1>{{'todo.list.title' | translate}}</h1>
+    <p> 
+        <a class="button" href="#!/{{'lang' | translate}}/{{'menu.options.url' | translate}}/{{'todo.form.url' | translate}}"><i class="fa fa-plus-square fa-1x fa-fw"></i>{{'todo.list.add' | translate}}</a>    
+        <span class="empty" ng-hide="todos.length > 0"> {{'todo.list.nothingToDo' | translate}}</span>
+    </p>
+    <p ng-show="todos.length > 0"><input ng-model="searchForName" /></p>
+    <table width="100%">
         <thead>
             <tr>
-                <th width="5%"><i class="fa fa-1x fa-check-square-o"></i></th>
-                <th width="70%">{{'todo.list.todo' | translate}}</th>
-                <th width="10%">{{'todo.list.added' | translate}}</th>
-                <th width="10%">{{'todo.list.done_by' | translate}}</th>
-                <th width="5%">{{'todo.list.priority' | translate}}</th>
-                <th width="5%"></th>
+                <th align="left" width="5%">
+                    <i class="fa fa-1x fa-square-o"></i>
+                </th>
+                <th align="left" ng-click="sortBy('name')">{{'todo.list.todo' | translate}}</th>
+                <th align="left" ng-click="sortBy('added')" width="15%">{{'todo.list.added' | translate}}</th>
+                <th align="left" ng-click="sortBy('doneBy')" width="15%">{{'todo.list.done_by' | translate}}</th>
+                <th align="left" width="5%">{{'todo.list.priority' | translate}}</th>
             </tr>
         </thead>
-        <tbody>
-            <tr ng-repeat="todo in todos | orderBy:'name'">
+        <tbody ng-repeat="todo in todos | orderBy:sortField:reverse | filter:searchForName">
+            <tr>
                 <td>
                     <span ng-click="todoOnOff(todo, 'done')">
                         <i ng-hide="todo.done" class="fa fa-1x fa-square-o"></i>
                         <i ng-show="todo.done" class="fa fa-1x fa-check-square-o"></i>
                     </span>
                 </td>
-                <td>{{todo.name}}</td>
+                <td ng-click="toggleTodo($index, todo)"><span ng-class="{todoLink: todo.description !== ''}">{{todo.name}}</span></td>
                 <td>{{todo.added}}</td>
                 <td>{{todo.done_by}}</td>
                 <td>
@@ -28,28 +33,36 @@
                         <i ng-hide="todo.priority" class="fa fa-1x fa-circle-o"></i>
                         <i ng-show="todo.priority" class="fa fa-1x fa-exclamation-circle"></i>
                     </span>
-                </td>
-                <td><i class="fa fa-1x fa-archive" ng-click="todoOnOff(todo,'removed')"></i></td>
+                </td>               
+            </tr>
+            <tr ng-show="isToggledTodo($index)">
+                <td><i ng-show="todo.done" class="fa fa-1x fa-archive" ng-click="todoOnOff(todo,'removed')"></i></td>
+                <td colspan="4">{{todo.description}}</td>
             </tr>
         </tbody>
     </table>
+    <!--
     <form name="formTodo">
         <h1>{{'todo.form.title' | translate}}</h1>
-        
-        <label>{{'todo.form.todo' | translate}}</label>
-        <input type="text" ng-model="toDo.todo" placeholder="todo" required /><br />
-        
-        <label>{{'todo.form.description' | translate}}</label>
-        <textarea ng-model="toDo.description" placeholder="{{'todo.description' | translate}}"></textarea><br />
-        
-        <label>{{'todo.form.doneBy' | translate}}</label>
-        <input type="date" ng-model="toDo.doneBy" placeholder="" required /><br />
-        
-        <input type="checkbox" ng-model="toDo.priority" />{{'todo.form.priority' | translate}}
-        
-        <!--<button ng-click="addTodo(newTodoName, newTodoDescription, newTodoDoneBy, newTodoPriority)"><i class="fa fa-1x fa-plus"> toevoegen</i></button>-->
-        <button ng-disabled="!canSave()" ng-click="submitForm(toDo)">{{'todo.form.submit' | translate}}</button>
-        
+        <p>
+            <label>{{'todo.form.todo' | translate}}</label>
+            <input type="text" ng-model="toDo.todo" placeholder="todo" required />
+        </p>
+        <p>
+            <label>{{'todo.form.description' | translate}}</label>
+            <textarea ng-model="toDo.description" placeholder="{{'todo.description' | translate}}"></textarea>
+        </p>
+        <p>
+            <label>{{'todo.form.doneBy' | translate}}</label>
+            <input type="date" ng-model="toDo.doneBy" placeholder="" required />
+        </p>
+        <p>
+            <input type="checkbox" ng-model="toDo.priority" />{{'todo.form.priority' | translate}}<br />
+        </p>
+        <p>
+            <button ng-disabled="!canSave()" ng-click="submitForm(toDo)">{{'todo.form.submit' | translate}}</button>
+        </p>
     </form>
     <pre ng-bind="toDo | json"></pre>
+    -->
 </section>

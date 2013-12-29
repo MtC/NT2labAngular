@@ -1,0 +1,25 @@
+<section ng-controller="TodoCtrl" ng-cloak>
+    <form name="formTodo">
+        <h1>{{'todo.form.title' | translate}}</h1>
+        <p>
+            <label>{{'todo.form.todo' | translate}}</label>
+            <input type="text" ng-model="toDo.todo" placeholder="todo" required />
+        </p>
+        <p>
+            <label>{{'todo.form.description' | translate}}</label>
+            <textarea ng-model="toDo.description" placeholder="{{'todo.description' | translate}}"></textarea>
+        </p>
+        <p>
+            <label>{{'todo.form.doneBy' | translate}}</label>
+            <input type="date" ng-model="toDo.doneBy" placeholder="" required />
+        </p>
+        <p>
+            <input type="checkbox" ng-model="toDo.priority" />{{'todo.form.priority' | translate}}<br />
+        </p>
+        <p>
+            <button ng-show="todoAddSubmit" ng-disabled="!canSave()" ng-click="submitForm(toDo)">{{'todo.form.submit' | translate}}</button>
+            <a class="button" ng-show="!todoAddSubmit" href="#!/{{'lang' | translate}}/{{'menu.options.url' | translate}}/{{'options.todo.url' | translate}}"><i class="fa fa-thumbs-up fa-1x fa-fw"></i>{{'todo.form.redirect' | translate}}</a>
+        </p>
+    </form>
+    <pre ng-bind="toDo | json"></pre>
+</section>

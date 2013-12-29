@@ -1,6 +1,7 @@
 <section>
-    <ul>
-        <li><a data-ng-href="#!/{{'lang' | translate}}/{{'menu.options.url' | translate}}/{{'options.todo.url' | translate}}">{{'options.todo.title' | translate}}</a></li>
-        <li><a data-ng-href="#!/{{'lang' | translate}}/{{'menu.options.url' | translate}}/{{'options.language.url' | translate}}">{{'options.language.title' | translate}}</a></li>
+    <h1>{{'options.main.title' | translate}}</h1>
+    <ul class="fas-ul" ng-controller="OptionsCtrl">
+        <li ng-show="isAuthenticated()"><a data-ng-href="#!/{{'lang' | translate}}/{{'menu.options.url' | translate}}/{{'options.todo.url' | translate}}"><i class="fa fa-dot-circle-o fa-1x fa-fw"></i>{{'options.todo.title' | translate}}</a></li>
+        <li><a data-ng-href="#!/{{'lang' | translate}}/{{'menu.options.url' | translate}}/{{'options.language.url' | translate}}"><i class="fa fa-dot-circle-o fa-1x fa-fw"></i>{{'options.language.title' | translate}}</a></li>
     </ul>
 </section>

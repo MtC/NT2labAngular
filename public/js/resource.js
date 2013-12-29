@@ -1,3 +1,6 @@
+/*
+http://closure-compiler.appspot.com/
+*/
 angular.module('ResourceModule',[]).
 
     factory('Resource', ['$http', 'Token', 'XSRF', function ($http, Token, XSRF) {
@@ -31,10 +34,8 @@ angular.module('ResourceModule',[]).
 					headers: {'token': Token.get()}
 				}).then(function (response) {
 					Token.set(response.headers('token'));
-                    //console.log(response);
 					if (response.headers('X-XSRF-TOKEN')) { 
                         XSRF.set(response.headers('X-XSRF-TOKEN'));
-                        //console.log(response.headers('X-XSRF-TOKEN'));
 					}
 					return response;
 				});

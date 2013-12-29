@@ -104,19 +104,26 @@ $app->get('/lang/:lang', function ($lang) use ($app) {
             'menu.app.name' => 'apps-list',
             'menu.options.url' => 'options',
             'menu.options.name' => 'options',
+            'options.main.title' => 'Options',
             'options.language.title' => 'language choice',
             'options.language.url' => 'language-choice',
             'options.todo.title' => 'todo',
             'options.todo.url' => 'todo',
+            'todo.list.title' => 'ToDo',
+            'todo.list.add' => 'add',
+            'todo.list.nothingToDo' => 'Give yourself something to do!',
             'todo.list.todo' => 'toDo',
             'todo.list.added' => 'added',
             'todo.list.done_by' => 'done by',
             'todo.list.priority' => 'priority',
+            'todo.form.url' => 'add-todo',
             'todo.form.title' => 'Add item',
             'todo.form.todo' => 'toDo',
             'todo.form.description' => 'description',
             'todo.form.doneBy' => 'done by',
             'todo.form.priority' => 'has priority',
+            'todo.form.submit' => 'submit',
+            'todo.form.redirect' => 'done',
             'menu.user.url' => 'my-nt2lab',
             'menu.user.name'=> 'my NT2lab',
             'menu.login.url' => 'login',
@@ -143,20 +150,26 @@ $app->get('/lang/:lang', function ($lang) use ($app) {
             'menu.user.name'=> 'mijn NT2lab',
             'menu.login.url'=> 'inlog',
             'menu.login.name' => 'inlogpagina',
-            'todo.nothingToDo' => 'Heb je niets om handen? Geef jezelf taken:',
-            'todo.list.added' => 'toegevoegd op',
             'options.lang.title' => 'Taal aanpassen',
             'options.lang.nl'=> 'Nederlands',
             'options.lang.en'=> 'Engels',
             'options.language.title' => 'taalkeuze',
             'options.language.url' => 'taalkeuze',
+            'options.main,title' => 'Opties',
             'options.todo.title' => 'todo',
             'options.todo.url' => 'todo',
+            'todo.list.title' => 'ToDo',
+            'todo.list.add' => 'meer',
+            'todo.list.todo' => 'ToDo',
+            'todo.list.done_by' => 'klaar op',
+            'todo.list.priority' => 'belangrijk',
+            'todo.list.nothingToDo' => 'Heb je niets om handen? Geef jezelf taken!',
+            'todo.list.added' => 'toegevoegd op',
+            'todo.form.url' => 'todo-toevoegen',
             'login.form.title' => 'Inlogpagina',
             'login.form.name' => 'inlognaam',
             'login.form.password' => 'wachtwoord',
             'login.form.submit' => 'inloggen',
-            'login.form.or' => 'of',
             'login.persona.button' => 'inloggen met Persona',
             'login.persona.explanation' => '']
     ];
@@ -164,8 +177,8 @@ $app->get('/lang/:lang', function ($lang) use ($app) {
     if (in_array($lang, $langs['options'])) {
         $return = $langs[$lang];
     } else {
-        $return = $langs['nl'];
-        $lang = 'nl';
+        $return = $langs['en'];
+        $lang = 'en';
         $return['error'] = true;
     }
     
@@ -177,6 +190,8 @@ $app->get('/lang/:lang', function ($lang) use ($app) {
     $menu->{$langs[$lang]['menu.login.url']} = 'login';
     $menu->{$langs[$lang]['options.todo.url']} = 'todo';
     $menu->{$langs[$lang]['options.language.url']} = 'language';
+    $menu->{$langs[$lang]['todo.form.url']} = 'todo-add';
+    
     
     $return['urlCheck'] = $menu;
     //$app->response()->header('Content-Type', 'application/json');
