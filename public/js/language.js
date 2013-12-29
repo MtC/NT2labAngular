@@ -5,7 +5,7 @@ angular.module('LanguageModule', ['pascalprecht.translate']).
     }).
     
     provider('Language', function () {
-		var sLanguage = 'nl';
+		var sLanguage = '';
 		return {
 			$get: function () {
 				return {

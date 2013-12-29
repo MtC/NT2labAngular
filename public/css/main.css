@@ -482,23 +482,33 @@ th, td {
   cursor: pointer;
 }
 
+/*
 label {
-  display: block;
-  margin: 0.2rem 0.5rem;
+    display: block;
+    //padding: 0.2 0 0.5 0.2;
+    margin: 0.2rem 0.5rem;
+    //background-color: green;
 }
-
+*/
 textarea {
-  width: 100%;
+  width: 80%;
+  border: 1px solid #30beff;
+  margin: 0;
+  padding: 5px;
+  resize: none;
+  overflow: auto;
+  line-height: 1.5rem;
 }
 
 a.button, .fas-ul a, button.button {
   display: inline-block;
-  padding: 0.1rem 0.4rem 0.1rem 0;
+  padding: 5px 10px;
   color: white;
-  font-size: 1.4rem;
   font-weight: bold;
   text-decoration: none;
   background-color: #30beff;
+  line-height: 1.5rem;
+  border: 1px solid #30beff;
 }
 a.button:visited, .fas-ul a:visited, button.button:visited {
   color: white;
@@ -508,8 +518,7 @@ a.button:active, a.button:hover, .fas-ul a:active, .fas-ul a:hover, button.butto
 }
 
 button.button {
-  padding: 0.1rem 0.4rem 0.1rem 0;
-  border: none;
+  padding-right: 0;
   background-image: none;
 }
 
@@ -527,4 +536,77 @@ button.button {
 
 h1 {
   color: #008ac9;
+}
+
+form input[type="text"], form input[type="password"] {
+  width: 60%;
+  padding: 5px;
+  border: 1px solid #30beff;
+  line-height: 1.5rem;
+  float: left;
+  /* some box shadow sauce :D */
+  box-shadow: inset 0px 2px 2px #ececec;
+}
+
+form input:focus {
+  /* No outline on focus */
+  outline: 0;
+  /* a darker border ? */
+  border: 1px solid #008ac9;
+}
+
+form label {
+  font-weight: bold;
+  background-color: #30beff;
+  padding: 5px 10px;
+  color: white;
+  border: 1px solid #30beff;
+  /* lets remove the right border */
+  border-right: 0;
+  line-height: 1.5rem;
+  width: 15%;
+  /* takes the width properly now and also the
+  spacing between the label and input field got removed. */
+  float: left;
+  cursor: default;
+}
+
+button.submit {
+  min-width: 15%;
+  text-align: left;
+  padding-right: 5px;
+}
+
+p {
+  overflow: auto;
+  width: 100%;
+  margin: 0.2rem 0;
+}
+
+form input[type="date"] {
+  padding: 4px 5px;
+  border: 1px solid #30beff;
+  border-left: none;
+  line-height: 1.5rem;
+  float: left;
+  /* some box shadow sauce :D */
+  box-shadow: inset 0px 2px 2px #ececec;
+}
+
+.checkbox {
+  padding: 1px 3px 0 3px;
+  border: 1px solid #30beff;
+  float: left;
+  background-color: white;
+  font-size: 1.5rem;
+}
+
+i.fa-check-square-o {
+  padding-left: 4px;
+}
+
+button.disabled, button.disabled:hover {
+  background-color: #f2f2f2;
+  border-color: #c4c4c4;
+  color: #c4c4c4;
 }

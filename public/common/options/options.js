@@ -20,6 +20,7 @@ angular.module('OptionsModule',[]).
         $scope.sortField = 'name';
         $scope.reverse = false;
         $scope.todoAddSubmit = true;
+        $scope.toDo = {priority: false};
         
         $scope.isToggledTodo = function (index) {
             return $scope.toggled[index];
@@ -36,6 +37,15 @@ angular.module('OptionsModule',[]).
                 $scope.sortField = fieldName;
                 $scope.reverse = false;
             }
+        }
+        
+        $scope.checkboxed = function () {
+            $scope.toDo.priority = !$scope.toDo.priority
+        }
+        
+        $scope.resetForm = function () {
+            $scope.toDo = {priority: false};
+            $scope.formTodo.$setPristine()
         }
         
         $scope.go = function ( path ) {

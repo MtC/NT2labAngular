@@ -1,25 +1,28 @@
 <section ng-controller="TodoCtrl" ng-cloak>
+    <h1>{{'todo.form.title' | translate}}</h1>
     <form name="formTodo">
-        <h1>{{'todo.form.title' | translate}}</h1>
         <p>
             <label>{{'todo.form.todo' | translate}}</label>
-            <input type="text" ng-model="toDo.todo" placeholder="todo" required />
-        </p>
-        <p>
-            <label>{{'todo.form.description' | translate}}</label>
-            <textarea ng-model="toDo.description" placeholder="{{'todo.description' | translate}}"></textarea>
+            <input type="text" ng-model="toDo.todo" placeholder="{{'todo.form.todo' | translate}}" required />
         </p>
         <p>
             <label>{{'todo.form.doneBy' | translate}}</label>
             <input type="date" ng-model="toDo.doneBy" placeholder="" required />
         </p>
         <p>
-            <input type="checkbox" ng-model="toDo.priority" />{{'todo.form.priority' | translate}}<br />
+            <label>{{'todo.form.description' | translate}}</label>
+            <textarea ng-model="toDo.description" rows="5" placeholder="{{'todo.form.description' | translate}}"></textarea>
         </p>
         <p>
-            <button ng-show="todoAddSubmit" ng-disabled="!canSave()" ng-click="submitForm(toDo)">{{'todo.form.submit' | translate}}</button>
+            <label>{{'todo.form.priority' | translate}}</label>
+            <span class="checkbox" ng-show="toDo.priority" ng-click="checkboxed()"><i class="fa fa-check-square-o fa-1x fa-fw"></i></span>
+            <span class="checkbox" ng-show="!toDo.priority" ng-click="checkboxed()"><i class="fa fa-square-o fa-1x fa-fw"></i></span>
+            <!--<input type="checkbox" ng-model="toDo.priority" /></div>-->
+        </p>
+        <p>
+            <button class="button submit" ng-show="todoAddSubmit" ng-class="{disabled: !canSave()}" ng-disabled="!canSave()" ng-click="submitForm(toDo)"><i class="fa fa-exclamation fa-1x fa-fw"></i>{{'todo.form.submit' | translate}}</button>
             <a class="button" ng-show="!todoAddSubmit" href="#!/{{'lang' | translate}}/{{'menu.options.url' | translate}}/{{'options.todo.url' | translate}}"><i class="fa fa-thumbs-up fa-1x fa-fw"></i>{{'todo.form.redirect' | translate}}</a>
+            <button type="button" class="button submit" ng-show="formTodo.$dirty" ng-click="resetForm()"><i class="fa fa-eraser fa-1x fa-fw"></i>{{'todo.form.reset' | translate}}</button>
         </p>
     </form>
-    <pre ng-bind="toDo | json"></pre>
 </section>

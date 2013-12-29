@@ -95,7 +95,7 @@ $app->get('/app/:id', function ($id) use ($app) {
 
 $app->get('/lang/:lang', function ($lang) use ($app) {
     $langs = [
-        'options'   => ['nl','en'],
+        'options'   => ['en','nl'],
         'en'        => [
             'lang' => 'en',
             'index.index' => 'NT2lab',
@@ -124,6 +124,7 @@ $app->get('/lang/:lang', function ($lang) use ($app) {
             'todo.form.priority' => 'has priority',
             'todo.form.submit' => 'submit',
             'todo.form.redirect' => 'done',
+            'todo.form.reset' => 'reset',
             'menu.user.url' => 'my-nt2lab',
             'menu.user.name'=> 'my NT2lab',
             'menu.login.url' => 'login',
@@ -156,16 +157,25 @@ $app->get('/lang/:lang', function ($lang) use ($app) {
             'options.language.title' => 'taalkeuze',
             'options.language.url' => 'taalkeuze',
             'options.main,title' => 'Opties',
-            'options.todo.title' => 'todo',
-            'options.todo.url' => 'todo',
-            'todo.list.title' => 'ToDo',
+            'options.todo.title' => 'taken',
+            'options.todo.url' => 'taken',
+            'options.main.title' => 'Opties',
+            'todo.list.title' => 'Taken',
             'todo.list.add' => 'meer',
-            'todo.list.todo' => 'ToDo',
+            'todo.list.todo' => 'Taken',
             'todo.list.done_by' => 'klaar op',
             'todo.list.priority' => 'belangrijk',
             'todo.list.nothingToDo' => 'Heb je niets om handen? Geef jezelf taken!',
             'todo.list.added' => 'toegevoegd op',
-            'todo.form.url' => 'todo-toevoegen',
+            'todo.form.url' => 'taak-toevoegen',
+            'todo.form.title' => 'Taak toevoegen',
+            'todo.form.todo' => 'taak',
+            'todo.form.doneBy' => 'klaar op',
+            'todo.form.description' => 'beschrijving',
+            'todo.form.priority' => 'belangrijk',
+            'todo.form.submit' => 'toevoegen',
+            'todo.form.reset' => 'legen',
+            'todo.form.redirect' => 'terug',
             'login.form.title' => 'Inlogpagina',
             'login.form.name' => 'inlognaam',
             'login.form.password' => 'wachtwoord',
@@ -177,8 +187,8 @@ $app->get('/lang/:lang', function ($lang) use ($app) {
     if (in_array($lang, $langs['options'])) {
         $return = $langs[$lang];
     } else {
-        $return = $langs['en'];
-        $lang = 'en';
+        $return = $langs['nl'];
+        $lang = 'nl';
         $return['error'] = true;
     }
     

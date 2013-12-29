@@ -35,7 +35,7 @@ angular.module('MtClab',['ngRoute','SecurityModule','ResourceModule','LanguageMo
 		};
 	}).
 
-	controller('LangCtrl',['$scope', '$location', function($scope, $location){
+	controller('LanguageCtrl',['$scope', '$location', function($scope, $location){
 		$scope.go = function ( path ) {
 			$location.path( path );
 		};
@@ -54,7 +54,7 @@ angular.module('MtClab',['ngRoute','SecurityModule','ResourceModule','LanguageMo
 					next.params.action = translations[next.params.action];
 				}
 			} else {
-				$location.path( 'en' );
+				$location.path( 'nl' );
 			}
 		});
 			
@@ -90,5 +90,5 @@ angular.module('MtClab',['ngRoute','SecurityModule','ResourceModule','LanguageMo
 				controller: tempCtrl
 			}).
 	
-			otherwise({ redirectTo: '/en/'});
+			otherwise({ redirectTo: '/nl/'});
 	}]);

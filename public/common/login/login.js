@@ -39,7 +39,7 @@ angular.module('LoginModule',[]).
         return Resource('login');
     }]).
 
-    controller('LoginCtrl',['$scope','Login', 'Credentials', function($scope, Login, Credentials) {
+    controller('LoginCtrl',['$scope', '$location','Login', 'Language', 'Credentials', function($scope, $location, Login, Language, Credentials) {
         $scope.loginSubmit = function() {
             
             var user = $scope.user;
@@ -50,7 +50,8 @@ angular.module('LoginModule',[]).
                         console.log(Credentials.getError());
                     } else {
                         Credentials.setUser(response.data.user, response.data.role);
-                        console.log('oke');
+						// hier moet later meer komen
+                        $location.path(Language.getLanguage());
                     }
                 }
             );
