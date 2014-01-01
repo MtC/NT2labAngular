@@ -538,35 +538,15 @@ h1 {
   color: #008ac9;
 }
 
-form input[type="text"], form input[type="password"] {
-  width: 60%;
-  padding: 5px;
-  border: 1px solid #30beff;
-  line-height: 1.5rem;
-  float: left;
-  /* some box shadow sauce :D */
-  box-shadow: inset 0px 2px 2px #ececec;
-}
-
-form input:focus {
-  /* No outline on focus */
-  outline: 0;
-  /* a darker border ? */
-  border: 1px solid #008ac9;
-}
-
 form label {
   font-weight: bold;
   background-color: #30beff;
   padding: 5px 10px;
   color: white;
   border: 1px solid #30beff;
-  /* lets remove the right border */
   border-right: 0;
   line-height: 1.5rem;
   width: 15%;
-  /* takes the width properly now and also the
-  spacing between the label and input field got removed. */
   float: left;
   cursor: default;
 }
@@ -583,14 +563,29 @@ p {
   margin: 0.2rem 0;
 }
 
-form input[type="date"] {
+input {
+  padding: 5px;
+  border: 1px solid #30beff;
+  line-height: 1.5rem;
+  box-shadow: inset 0px 2px 2px #ececec;
+}
+
+input:focus {
+  outline: 0;
+  border: 1px solid #008ac9;
+}
+
+form input[type="text"], form input[type="password"] {
+  width: 60%;
+}
+
+input[type="date"] {
   padding: 4px 5px;
   border: 1px solid #30beff;
-  border-left: none;
-  line-height: 1.5rem;
+}
+
+form input {
   float: left;
-  /* some box shadow sauce :D */
-  box-shadow: inset 0px 2px 2px #ececec;
 }
 
 .checkbox {
@@ -601,12 +596,19 @@ form input[type="date"] {
   font-size: 1.5rem;
 }
 
-i.fa-check-square-o {
-  padding-left: 4px;
-}
-
 button.disabled, button.disabled:hover {
   background-color: #f2f2f2;
   border-color: #c4c4c4;
   color: #c4c4c4;
+}
+
+.required {
+  float: left;
+  color: red;
+  font-size: 1.4rem;
+  margin: -0.1rem 0 0 -1rem;
+}
+
+i {
+  cursor: pointer;
 }

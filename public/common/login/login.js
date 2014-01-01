@@ -1,5 +1,5 @@
 angular.module('LoginModule',[]).
-    
+    /*
     provider('Credentials', function () {
 		var user  = false,
             error = false,
@@ -10,6 +10,10 @@ angular.module('LoginModule',[]).
                     setUser: function (newUser, newRole) {
                         user = newUser;
                         role = newRole;
+						if (window.sessionStorage) {
+							sessionStorage.setItem('user', newUser);
+							sessionStorage.setItem('role', newRole);
+						}
                         this.setError(false);
                     },
                     getUser: function () {
@@ -34,17 +38,18 @@ angular.module('LoginModule',[]).
 			}
 		}
 	}).
-    
+    */
     factory('Login', ['Resource', function (Resource) {
         return Resource('login');
     }]).
 
     controller('LoginCtrl',['$scope', '$location','Login', 'Language', 'Credentials', function($scope, $location, Login, Language, Credentials) {
+        
         $scope.loginSubmit = function() {
-            
             var user = $scope.user;
             Login.post({login: user.name, password: user.password}).then(
                 function (response) {
+					console.log(response);
                     if (response.error) {
                         Credentials.setError(response.error);
                         console.log(Credentials.getError());

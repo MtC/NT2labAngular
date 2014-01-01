@@ -14,7 +14,7 @@ angular.module('OptionsModule',[]).
         }
     }]).
     
-    controller('TodoCtrl', ['$scope', '$location', 'ToDo', function ($scope, $location, ToDo) {
+    controller('TodoCtrl', ['$scope', '$location', 'ToDo', 'Language', function ($scope, $location, ToDo, Language) {
         $scope.todos = [];
         $scope.toggled = [];
         $scope.sortField = 'name';
@@ -26,8 +26,8 @@ angular.module('OptionsModule',[]).
             return $scope.toggled[index];
         }
         
-        $scope.toggleTodo = function (index, todo) {
-            $scope.toggled[index] = todo.description !== '' ? !$scope.toggled[index] : false;
+        $scope.toggleTodo = function (index) {
+            $scope.toggled[index] = !$scope.toggled[index];
         }
         
         $scope.sortBy = function (fieldName) {
@@ -38,6 +38,14 @@ angular.module('OptionsModule',[]).
                 $scope.reverse = false;
             }
         }
+		
+		$scope.doneFilter = function (todo) {
+			return todo.done === 1;
+		}
+		
+		$scope.dater = function () {
+			return 'd-MM-yyyy';
+		}
         
         $scope.checkboxed = function () {
             $scope.toDo.priority = !$scope.toDo.priority
@@ -56,14 +64,18 @@ angular.module('OptionsModule',[]).
             $scope.todos = todos.data;
         });
        
-        //$scope.changeTodo = function (todo) {};
+        $scope.changeTodo = function (todo) {
+			console.log('test');
+			$location.path(Language.getUrl('lang') + '/' + Language.getUrl('menu.options.url') + '/' + Language.getUrl('todo.form.url'));
+		};
         
-        $scope.submitForm = function (todo) {
+        $scope.addTodo = function (todo) {
             console.log(todo);
             ToDo.post(todo).then(function (todo) {
                 console.log(todo);
-                $scope.todos.push(todo.data[0]);
-                $scope.todoAddSubmit = false;
+                //$scope.todos.push(todo.data[0]);
+                //$scope.todoAddSubmit = false;
+				$location.path(Language.getUrl('lang') + '/' + Language.getUrl('menu.options.url') + '/' + Language.getUrl('options.todo.url'));
             });
         };
         

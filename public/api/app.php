@@ -48,21 +48,123 @@ function returnResult($action, $success = true, $id = 0) {
 
 //routegroups
 
-function returnCall($response) {
+function crypto_rand_secure($min, $max) {
+        $range = $max - $min;
+        if ($range < 0) return $min; // not so random...
+        $log = log($range, 2);
+        $bytes = (int) ($log / 8) + 1; // length in bytes
+        $bits = (int) $log + 1; // length in bits
+        $filter = (int) (1 << $bits) - 1; // set all lower bits to 1
+        do {
+            $rnd = hexdec(bin2hex(openssl_random_pseudo_bytes($bytes)));
+            $rnd = $rnd & $filter; // discard irrelevant bits
+        } while ($rnd >= $range);
+        return $min + $rnd;
+}
+
+function getToken($length, $isSimple = false){
+    $token = "";
+    $codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    $codeAlphabet.= "abcdefghijklmnopqrstuvwxyz";
+    $codeAlphabet.= "0123456789";
+    $codeAlphabet.= $isSimple ? '' : '&%$#@_';
+    for($i=0;$i<$length;$i++){
+        $token .= $codeAlphabet[crypto_rand_secure(0,strlen($codeAlphabet))];
+    }
+    return $token;
+}
+
+$app->get('/trial', function () use ($app) {
+    $app->response()->header('request', 'credentials');
+    echo json_encode(['trial' => true]);
+    //returnCall(['trial' => true]); 
+});
+
+$app->get('/poging/:name', function ($name) use ($app) {
+    $_user = R::findOne('_users', 'name_canonical=?', [$name]);
+    $_user->token = getToken(30);
+    $_user->token_time = time();
+    $_user->xsrf = $app->request()->headers('X-XSRF-TOKEN');
+    $_id = R::store($_user);
+    echo $_user->token;
+});
+
+function login () {
     $app = \Slim\Slim::getInstance();
-    if (null !== $app->request()->headers('token')) {
-        $token = "{$app->request()->headers('token')}";
-    } else if (isset($response['auth']) && $response['auth']) {
-        //create token and place in database
-        $token = 'authenticated';
+    $request = $app->request();
+    $body = $request->getBody();
+    $input = json_decode($body);
+    $_name = strtolower($input->login);
+
+    $_user = R::findOne('_users', 'name_canonical=?', [$_name]);
+    $_user->login_time = date("Y-m-d H:i:s", time());
+    $_user->token = getToken(30);
+    $_user->token_time = $_user->login_time;
+    $_user->xsrf = getToken(50);
+    $_id = R::store($_user);
+
+    return ['token' => $_user->token, 'xsrf' => $_user->xsrf];
+}
+
+function update() {
+    $app = \Slim\Slim::getInstance();
+    $request = $app->request();
+    $_token = $app->request()->headers('token');
+
+    $_user = R::findOne('_users', 'token=?', [$_token]);
+    $_user->token = getToken(30);
+    $_user->token_time = date("Y-m-d H:i:s", time());
+    $_id = R::store($_user);
+
+    return $_user->token;
+}
+
+function logout () {
+    $app = \Slim\Slim::getInstance();
+    $request = $app->request();
+    $_token = $app->request()->headers('token');
+    $_xsrf = $app->request()->headers('X-XSRF-TOKEN');
+
+    $_user = R::findOne('_users', 'xsrf=?', [$_xsrf]);
+    $_user->login_time = '0000-00-00 00:00:00';
+    $_user->token = '';
+    $_user->token_time = $_user->login_time;
+    $_user->xsrf = '';
+    $_id = R::store($_user);
+
+    return 'null';
+}
+
+function returnCall($response, $loginout = false) {
+    $app = \Slim\Slim::getInstance();  
+    if (!$loginout) {
+        if (null !== $app->request()->headers('token')) {
+            $token = update();
+        } else if (isset($response['auth']) && $response['auth']) {
+            //hier moet extra check komen
+            $token = update();
+        } else {
+            $token = getToken(30);      
+        }
+    } else if ($loginout == 'login') {
+        $_response = login();
+        $token = $_response['token'];
+        $app->response()->header('X-XSRF-TOKEN', $_response['xsrf']);
+        
     } else {
-        $token = 'pipo';
-        $app->response()->header('X-XSRF-TOKEN', '$xsrf');
-    }   
+        $token = logout();
+        $app->response()->header('X-XSRF-TOKEN', 'null');
+    }
     $app->response()->header('token', $token);
     $app->response()->header('Content-Type', 'application/json');
     echo json_encode($response);
 }
+
+$app->get('/token/:token', function ($token) {
+    $salt = bin2hex(openssl_random_pseudo_bytes(22));
+    $hash = crypt($token, '$2a$12$'.$salt);
+    echo json_encode(['token' => $hash]);
+});
 
 $app->get('/app', function () use ($app) {
     $_oDB = R::find('apps');
@@ -181,7 +283,9 @@ $app->get('/lang/:lang', function ($lang) use ($app) {
             'login.form.password' => 'wachtwoord',
             'login.form.submit' => 'inloggen',
             'login.persona.button' => 'inloggen met Persona',
-            'login.persona.explanation' => '']
+            'login.persona.explanation' => '',
+            'menu.logout.name' => 'uitloggen',
+            'error.bad-request' => 'inlognaam of wachtwoord incorrect']
     ];
     
     if (in_array($lang, $langs['options'])) {
@@ -202,8 +306,19 @@ $app->get('/lang/:lang', function ($lang) use ($app) {
     $menu->{$langs[$lang]['options.language.url']} = 'language';
     $menu->{$langs[$lang]['todo.form.url']} = 'todo-add';
     
+    $url = [];
+    $url['lang'] = $lang;
+    $url['menu.app.url'] = $langs[$lang]['menu.app.url'];
+    $url['menu.options.url'] = $langs[$lang]['menu.options.url'];
+    $url['menu.user.url'] = $langs[$lang]['menu.user.url'];
+    $url['menu.login.url'] = $langs[$lang]['menu.login.url'];
+    $url['options.todo.url'] = $langs[$lang]['options.todo.url'];
+    $url['options.language.url'] = $langs[$lang]['options.language.url'];
+    $url['todo.form.url'] = $langs[$lang]['todo.form.url'];
+    
     
     $return['urlCheck'] = $menu;
+    $return['url'] = $url;
     //$app->response()->header('Content-Type', 'application/json');
     //echo \json_encode($return);
     returnCall($return);
@@ -244,19 +359,32 @@ $app->post('/app', function () use ($app) {
 });
 
 $app->post('/login', function () use ($app) {
-    $request = $app->request();
-    $body = $request->getBody();
-    $input = json_decode($body);
-    if ($input->login == 'michel' && $input->password == 'mikmik') {
-        //$app->response()->header('Access-Control-Expose-Headers', 'token');
-        //$app->response()->header('token', 'zotteklap');
-        //$app->response()->header('Content-Type', 'application/json');
-        //echo \json_encode(['auth' => true]);
-        returnCall(['user' => 'Michel', 'role' => 'user']);
-    } else {
+    $_request = $app->request();
+    $_body = $_request->getBody();
+    $_input = json_decode($_body);
+    
+    $_name = strtolower($_input->login);
+    
+    try {
+        $_oDB = R::findOne('_users', 'name_canonical=?', [$_name]);
+        if ($_oDB) {
+            $_hash = $_oDB->password;
+            if (crypt($_input->password, $_hash) == $_hash) {
+                returnCall(['user' => $_oDB->name, 'role' => $_oDB->role], 'login');
+            } else {
+                throw new Exception('unknown user or password');
+            }
+        } else {
+            throw new Exception('unknown user or password');
+        }
+    } catch (Exception $e) {
         $app->response()->status(400);
-        //$app->response()->header('X-Status-Reason', 'oops');
+        $app->response()->header('X-Status-Reason', $e->getMessage());
     }
+});
+
+$app->post('/logout', function () use ($app) {
+    returnCall([], 'logout');
 });
 /*
 $app->post('/persona/:action', function ($action) use ($app) {
