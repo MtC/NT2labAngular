@@ -112,11 +112,15 @@ function update() {
     $_token = $app->request()->headers('token');
 
     $_user = R::findOne('_users', 'token=?', [$_token]);
-    $_user->token = getToken(30);
-    $_user->token_time = date("Y-m-d H:i:s", time());
-    $_id = R::store($_user);
-
-    return $_user->token;
+    if ($_user) {
+        $_user->token = getToken(30);
+        $_user->token_time = date("Y-m-d H:i:s", time());
+        $_id = R::store($_user);
+        $token = $_user->token;
+    } else {
+        $token = getToken(30);
+    }
+    return $token;
 }
 
 function logout () {
@@ -308,6 +312,9 @@ $app->get('/lang/:lang', function ($lang) use ($app) {
     
     $url = [];
     $url['lang'] = $lang;
+    foreach ($langs['options'] as $l) {
+        $url['backToLanguage'][$l] = $l.'/'.$langs[$l]['menu.options.url'].'/'.$langs[$l]['options.language.url'];
+    }
     $url['menu.app.url'] = $langs[$lang]['menu.app.url'];
     $url['menu.options.url'] = $langs[$lang]['menu.options.url'];
     $url['menu.user.url'] = $langs[$lang]['menu.user.url'];
@@ -330,6 +337,46 @@ $app->get('/lang/:lang', function ($lang) use ($app) {
 
     }
     */
+});
+
+$app->get('/menu', function () use ($app) {
+    $return = [
+        'urlToLanguage' => [
+            'en' => [
+                'menu.app.url'          => 'apps',
+                'menu.options.url'      => 'options',
+                'menu.user.url'         => 'my-nt2lab',
+                'menu.login.url'        => 'login',
+                'options.todo.url'      => 'todo',
+                'options.language.url'  => 'language-choice',
+                'todo.form.url'         => 'add-todo'
+            ],
+            'nl' => [
+                'menu.app.url'          => 'apps',
+                'menu.options.url'      => 'opties',
+                'menu.user.url'         => 'mijn-nt2lab',
+                'menu.login.url'        => 'inlog',
+                'options.todo.url'      => 'taken',
+                'options.language.url'  => 'taalkeuze',
+                'todo.form.url'         => 'taak-toevoegen'
+            ]
+         ],
+         'urlToMenu'    => [
+            'menu.app.url'          => 'apps',
+            'menu.options.url'      => 'options',
+            'menu.user.url'         => 'user',
+            'menu.login.url'        => 'login',
+            'options.todo.url'      => 'todo',
+            'options.language.url'  => 'language',
+            'todo.form.url'         => 'todo-add'
+         ]
+    ];
+    foreach($return['urlToLanguage'] as $key => $value) {
+        foreach($return['urlToLanguage'][$key] as $url => $name) {
+            $return['languageToUrl'][$key][$name] = $url;
+        }
+    }
+    returnCall($return);
 });
 
 $app->post('/app', function () use ($app) {    

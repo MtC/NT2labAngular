@@ -2,14 +2,13 @@ angular.module('MtClab',['ngRoute','Directives', 'TokenModule'/*,'SecurityModule
 	
 	config(function($routeProvider, $locationProvider, HeadersProvider, CredentialsProvider) {
         $routeProviderReference = $routeProvider;
-        $locationProvider.html5Mode(false);
-        $locationProvider.hashPrefix('!');
+        $locationProvider.html5Mode(false).hashPrefix('!');
 		HeadersProvider.setCredentials(CredentialsProvider.getCredentials());
     }).
 	
-	filter('searchFor', function(){
-		return function(arr, searchString){
-			if(!searchString){
+	filter('searchFor', function() {
+		return function (arr, searchString){
+			if (!searchString){
 				return arr;
 			}
 			var result = [];
@@ -23,56 +22,66 @@ angular.module('MtClab',['ngRoute','Directives', 'TokenModule'/*,'SecurityModule
 			return result;
 		};
 	}).
-
-	controller('LanguageCtrl',['$scope', '$location', 'Language', function($scope, $location, Language){
-		$scope.go = function ( lang ) {
-			if (Language.isSessionStorage()) sessionStorage.setItem('lang', lang);
-			$location.path( lang );
-		};
-	}]).
-
-	run(['$rootScope', '$location', '$route', 'Token', 'XSRF', 'Menu', 'Language', 'Credentials', function($rootScope, $location, $route, Token, XSRF, Menu, Language, Credentials) {
-		var tempCtrl;
-		
-		//console.log(Resource('trials');
-		//console.log(Resource.getKieke());
-
-		console.log(Language.getLanguage());
-		
-		
-		
-		if (window.sessionStorage) {
-			Language.setSessionStorage(true);
-			if (sessionStorage.getItem('lang')) {
-				Language.setLanguage(sessionStorage.getItem('lang'));
-				//$route.reload();//(sessionStorage.getItem('lang'));
-				console.log('reload language');
-				Language.setReload(true);
+	
+	filter('filterField', function() {
+		console.log('check');
+		return function (arr, field) {
+			if (!item) {
+				return arr;
 			}
-			if (!Credentials.isAuthenticated() && sessionStorage.getItem('user')) {
-				Credentials.setUser(sessionStorage.getItem('user'), sessionStorage.getItem('role'));
-				Token.set(sessionStorage.getItem('token'));
-				XSRF.set(sessionStorage.getItem('xsrf'));
-			}
-			console.log(sessionStorage);
+			var result = [];
+			angular.forEach(arr, function (item) {
+				if (item[field] === 0) {
+					result.push(item);
+				}
+			});
+			return result;
+		}
+	}).
+	
+	factory('LanguageFactory', ['Resource', function (Resource) {
+        return Resource('lang');
+    }]).
+	
+	factory('Logout', ['Resource', function (Resource) {
+        return Resource('logout');
+    }]).
+	
+	factory('Menu', ['Resource', function (Resource) {
+        return Resource('menu');
+    }]).
+
+	run(['$rootScope', '$location', '$route', '$translate', 'Menu', 'Language', 'LanguageFactory', 'Credentials', 'Navigation', 'Logout', function($rootScope, $location, $route, $translate, Menu, Language, LanguageFactory, Credentials, Navigation, Logout) {
+		var tempCtrl
+		$rootScope.afterLanguage = function () {
+			$translate.uses(Language.getLanguage());
+			$rootScope.$on( "$routeChangeStart", function(event, current, previous) {
+				console.log(current.params);
+				if (current.params.lang !== Language.getLanguage()) {
+					LanguageFactory.setId(current.params.lang);
+					LanguageFactory.get().then(function (response) {
+						var langs = response.data;
+						Language.setLanguage(langs.lang);
+						$translateProviderReference.translations(langs.lang, langs);
+						if (Language.isSessionStorage()) sessionStorage.setItem('langs', JSON.stringify(langs));
+						$rootScope.rootScopeOn(event, current, previous);
+					});	
+				} else {
+					$rootScope.rootScopeOn(event, current, previous);						
+				}
+			});				
 		}
 		
-		
-		$rootScope.$on( "$routeChangeStart", function(event, next, current) {
-			var translations = Menu.get();
-			if (typeof(translations.init) !== 'undefined') {
-				if (typeof(next.params.option) !== 'undefined') {
-					next.params.option = translations[next.params.option];
+		$rootScope.rootScopeOn = function (event, current, previous) {
+			$translate.uses(Language.getLanguage());
+			if (typeof(current.params.option) !== 'undefined') {
+				current.params.option = Navigation.getItem(current.params.option);//translations[current.params.option];
+				if (typeof(current.params.action) !== 'undefined') {
+					current.params.action = Navigation.getItem(current.params.action);//translations[current.params.action];
 				}
-				if (typeof(next.params.action) !== 'undefined') {
-					next.params.action = translations[next.params.action];
-				}
-			} else {
-				var path = Language.isSessionStorage() && sessionStorage.getItem('lang') ? sessionStorage.getItem('lang') : 'nl';
-				$location.path( path );
 			}
-		});
-			
+		}
+
 		$routeProviderReference.
 			when('/:lang', { templateUrl: 'common/index/index.tpl.html', controller: 'IndexCtrl' }).
 			when('/:lang/:option', {
@@ -80,11 +89,9 @@ angular.module('MtClab',['ngRoute','Directives', 'TokenModule'/*,'SecurityModule
 					if (!Language.getLanguage() || Language.getLanguage() !== url.lang) {
 						$location.path( url.lang );
 					} else {
-						var urls = Menu.get();
 						url.url     = 'common/' + url.option + '/' + url.option + '.tpl.html';
 						tempCtrl 	= php.ucfirst(url.option) + 'Ctrl';
 					}
-					//console.log(tempCtrl);
 					return url.url;
 				},
 				controller: tempCtrl
@@ -92,20 +99,73 @@ angular.module('MtClab',['ngRoute','Directives', 'TokenModule'/*,'SecurityModule
 			
 			when('/:lang/:option/:action', {
 				templateUrl: function(url) {
+					console.log(url);
 					if (!Language.getLanguage() || Language.getLanguage() !== url.lang) {
 						$location.path( url.lang );
 					} else {               
-						var urls = Menu.get();
 						url.url     = 'common/' + url.option + '/' + url.option + '.' + url.action + '.tpl.html';
 						tempCtrl 	= php.ucfirst(url.action) + 'Ctrl';
 					}
-					//console.log(tempCtrl);
 					return url.url;
 				},
 				controller: tempCtrl
 			}).
 	
 			otherwise({ redirectTo: '/nl/'});
+
+		$rootScope.Navigation = function () {
+			Navigation.setLanguage(Language.getLanguage());
+			if (Navigation.isMenuLoaded()) {
+				console.log('menu loaded');
+				$rootScope.afterLanguage();
+			} else {
+				Menu.query().then(function (response) {
+					Navigation.setMenu(response.data);
+					$rootScope.afterLanguage();
+				});
+			}
+		}
+		
+		if (Language.isSessionStorage()) {
+			if (Language.isLanguageInSession()) {
+				var langs = JSON.parse(sessionStorage.getItem('langs'));
+				$translateProviderReference.translations(langs.lang, langs);
+				Language.setLanguage(langs.lang);
+				console.log('language loaded from session');
+				$rootScope.Navigation();
+			} else {
+				LanguageFactory.setId(Language.getLanguage());
+				LanguageFactory.get().then(function (response) {
+					var langs = response.data;
+					sessionStorage.setItem('langs', JSON.stringify(langs));
+					$translateProviderReference.translations(langs.lang, langs);
+					console.log('language loaded from rest (to session)');
+					$rootScope.Navigation();
+				});
+			}
+		} else {
+			LanguageFactory.setId(Language.getLanguage());
+			LanguageFactory.get().then(function (response) {
+				var langs = response.data;
+				$translateProviderReference.translations(langs.lang, langs);
+				console.log('language loaded from rest (no session)');
+				NavigationProvider();
+			});
+		}
+		
+		$rootScope.isAuthenticated = function () {
+            return Credentials.isAuthenticated();
+        }
+
+		$rootScope.logout = function () {
+			console.log(Credentials.getHeaders());
+			Logout.post().then(function (response) {
+				console.log(sessionStorage);
+				Credentials.setUser(false, false);
+				$location.path('');
+			});
+		}
+		
 	}]);
 	
 // moet nog eigen file krijgen

@@ -4,25 +4,30 @@ angular.module('LanguageModule', ['pascalprecht.translate']).
 		var sLanguage 	= false,
 			oUrl		= {},
 			bSessionStorage = false,
+			bLanguageInSession = false,
 			bReload = false;
 		return {
 			setLanguage: function (lang) {
 				sLanguage = lang;
-				console.log(sessionStorage);
-				console.log(sLanguage);
+			},
+			isLanguageInSession: function (bool) {
+				bLanguageInSession = bool;
+			},
+			isSessionStorage: function (bool) {
+				bSessionStorage = bool;
 			},
 			$get: function () {
 				return {
 					setLanguage: function (language) {
 						sLanguage = language;
-						if (window.sessionStorage) {
-							sessionStorage.setItem('lang',sLanguage);
-						}
 					},
 					getLanguage: function () {
 						return sLanguage;
 					},
-					setUrl: function (url) {//waarom bij set alles en bij get een method?
+					isLanguageInSession: function () {
+						return bLanguageInSession;
+					},
+					setUrl: function (url) {
 						oUrl = url;
 					},
 					getUrl: function (url) {
@@ -47,18 +52,18 @@ angular.module('LanguageModule', ['pascalprecht.translate']).
 	
 	config(function($translateProvider, LanguageProvider) {
         $translateProviderReference = $translateProvider;
-		var lang = window.sessionStorage && sessionStorage.getItem('lang') ? sessionStorage.getItem('lang') : false;
-		LanguageProvider.setLanguage(lang);
-    }).
-	
-	factory('Menu', function() {
-		var menuFactory = {},
-			menu = {};
-		menuFactory.set = function(newMenu) {
-			menu = newMenu;
-		};
-		menuFactory.get = function() {
-			return menu;
+		if (window.sessionStorage) {
+			LanguageProvider.isSessionStorage(true);
+			if (sessionStorage.getItem('langs')) {
+				var langs = sessionStorage.getItem('langs');
+				LanguageProvider.setLanguage(langs.lang);
+				LanguageProvider.isLanguageInSession(true);
+				console.log('language in session');
+			} else {
+				LanguageProvider.setLanguage('nl');
+				console.log('language must be loaded');
+			}
+		} else {
+			LanguageProvider.setLanguage('nl');
 		}
-		return menuFactory;
-	});
+    });

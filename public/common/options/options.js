@@ -14,11 +14,10 @@ angular.module('OptionsModule',[]).
         }
     }]).
     
-    controller('TodoCtrl', ['$scope', '$location', 'ToDo', 'Language', function ($scope, $location, ToDo, Language) {
+    controller('TodoCtrl', ['$scope', 'ToDo', 'Navigation', function ($scope, ToDo, Navigation) {
         $scope.todos = [];
         $scope.toggled = [];
-        $scope.sortField = 'name';
-        $scope.reverse = false;
+        $scope.sortField = 'done_by';
         $scope.todoAddSubmit = true;
         $scope.toDo = {priority: false};
         
@@ -32,19 +31,20 @@ angular.module('OptionsModule',[]).
         
         $scope.sortBy = function (fieldName) {
             if ($scope.sortField === fieldName) {
-                $scope.reverse = !$scope.reverse;
+                $scope.sortFieldReverse = !$scope.sortFieldReverse;
             } else {
                 $scope.sortField = fieldName;
-                $scope.reverse = false;
+                $scope.sortFieldReverse = false;
             }
         }
 		
-		$scope.doneFilter = function (todo) {
-			return todo.done === 1;
-		}
-		
 		$scope.dater = function () {
-			return 'd-MM-yyyy';
+			// simpele oplossing: kan en moet beter
+			if (Navigation.getLanguage() === 'nl') {
+				return 'dd-MM-yyyy';
+			} else {
+				return 'yyyy-MM-dd';
+			}
 		}
         
         $scope.checkboxed = function () {
@@ -57,7 +57,7 @@ angular.module('OptionsModule',[]).
         }
         
         $scope.go = function ( path ) {
-			$location.path( path );
+			Navigation.go( path );
 		};
         
         ToDo.query().then(function (todos) {
@@ -66,7 +66,7 @@ angular.module('OptionsModule',[]).
        
         $scope.changeTodo = function (todo) {
 			console.log('test');
-			$location.path(Language.getUrl('lang') + '/' + Language.getUrl('menu.options.url') + '/' + Language.getUrl('todo.form.url'));
+			Navigation.go(Navigation.getLanguage() + '/' + Navigation.getMenuItem('menu.options.url') + '/' + Navigation.getMenuItem('options.todo.change-todo'));
 		};
         
         $scope.addTodo = function (todo) {
@@ -75,7 +75,7 @@ angular.module('OptionsModule',[]).
                 console.log(todo);
                 //$scope.todos.push(todo.data[0]);
                 //$scope.todoAddSubmit = false;
-				$location.path(Language.getUrl('lang') + '/' + Language.getUrl('menu.options.url') + '/' + Language.getUrl('options.todo.url'));
+				Navigation.go(Navigation.getLanguage() + '/' + Navigation.getMenuItem('menu.options.url') + '/' + Navigation.getMenuItem('options.todo.url'));
             });
         };
         
@@ -99,5 +99,12 @@ angular.module('OptionsModule',[]).
         $scope.canSave = function () {
             return $scope.formTodo.$valid;
         };
-        
-    }]);
+    }]).
+	
+	controller('LanguageCtrl',['$scope', 'Navigation', function ($scope, Navigation) {
+		$scope.go = function (lang) {
+			Navigation.setLanguage(lang);
+			console.log('/' + lang + '/' + Navigation.getMenuItem('menu.options.url') + '/' + Navigation.getMenuItem('options.todo.url'));
+			Navigation.go('/' + lang + '/' + Navigation.getMenuItem('menu.options.url') + '/' + Navigation.getMenuItem('options.language.url'));
+		}
+	}]);

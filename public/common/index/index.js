@@ -8,11 +8,11 @@ angular.module('IndexModule',[]).
         return Resource('trial');
     }]).
 
-    controller('IndexCtrl', ['$scope', '$route', '$translate', 'Trial','Token', 'XSRF', 'Menu', 'Language', 'Index', 'Credentials', function($scope, $route, $translate, Trial, Token, XSRF, Menu, Language, Index, Credentials) {
-        //if (!Language.getLanguage() && window.sessionStorage && sessionStorage.getItem('lang')) Language.setLanguage(sessionStorage.getItem('lang'));
+    controller('IndexCtrl', ['$scope', '$route', '$translate', 'Trial', 'Language', 'Index', 'Credentials', function($scope, $route, $translate, Trial, Language, Index, Credentials) {
+        console.log('indexpagina bereikt');
+        /*
         if (Language.getLanguage() !== $route.current.pathParams.lang || Language.isReload()) {
-            //console.log($route.current.pathParams.lang);
-            //console.log(Index.setOption());
+            console.log('t');
             console.log(Index.getHeaders());
             console.log(sessionStorage);
             Credentials.setTokens('pipo', 'clown');
@@ -34,11 +34,10 @@ angular.module('IndexModule',[]).
                     Language.setLanguage(response.data.lang);
                     Language.setUrl(response.data.url);
                     $translate.uses(Language.getLanguage());
-                    console.log(sessionStorage);
-                    console.log(XSRF.get());
                 }
             );
         }
+        */
         
         $scope.authenticate = function () {
             Trial.setId('pixie');

@@ -2,7 +2,11 @@ angular.module('TokenModule',[]).
 
     provider('Credentials', function () {
 		var bSessionStorage = false,
-            oCredentials     = {
+			oErrors			= {
+				bError:	false,
+				sError:	''
+			},
+            oCredentials    = {
                 token:  false,
                 xsrf:   false,
                 user:   false,
@@ -20,9 +24,13 @@ angular.module('TokenModule',[]).
             setTokensSessionStorage: function () {
                 if (sessionStorage.getItem('credentials')) {
                     var credentials = JSON.parse(sessionStorage.getItem('credentials'));
-                    oCredentials.token   = credentials.token ? credentials.token : false;
+                    oCredentials.token  = credentials.token ? credentials.token : false;
                     oCredentials.xsrf   = credentials.xsrf ? credentials.xsrf : false;
-                }
+					oCredentials.user   = credentials.user ? credentials.user : false;
+					oCredentials.role   = credentials.role ? credentials.role : false;
+                } else {
+					sessionStorage.setItem('credentials', JSON.stringify(oCredentials));
+				}
             },
             getCredentials: function () {
                 return oCredentials;
@@ -37,19 +45,30 @@ angular.module('TokenModule',[]).
                         oCredentials.role = role;
                     },
                     setTokens: function (token, xsrf) {
-                        oCredentials.token   = token;
+                        oCredentials.token   = token || false;
                         oCredentials.xsrf    = xsrf || false;
                     },
                     getHeaders: function () {
-                        var headers = {token: oCredentials.token}
-                        if (oCredentials.xsrf !== 'null') {
-                            headers.xsrf = oCredentials.xsrf;
-                        }
+                        var headers = {
+							token:	oCredentials.token,
+							xsrf:	oCredentials.xsrf
+						};
                         return headers;
                     },
                     isAuthenticated: function () {
-                        return true;
-                    }
+                        return oCredentials.user ? true : false;
+                    },
+					isError: function () {
+						return oErrors.bError;
+					},
+					getError: function () {
+						return this.isError() ? oErrors.sError : '';
+					},
+					saveToSession: function () {
+						if (bSessionStorage) {
+							sessionStorage.setItem('credentials',JSON.stringify(oCredentials))
+						}
+					}
 				};
 			}
 		}; 

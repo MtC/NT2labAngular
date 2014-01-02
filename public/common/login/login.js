@@ -1,44 +1,5 @@
 angular.module('LoginModule',[]).
-    /*
-    provider('Credentials', function () {
-		var user  = false,
-            error = false,
-            xsrf, role;
-		return {
-			$get: function () {
-				return {
-                    setUser: function (newUser, newRole) {
-                        user = newUser;
-                        role = newRole;
-						if (window.sessionStorage) {
-							sessionStorage.setItem('user', newUser);
-							sessionStorage.setItem('role', newRole);
-						}
-                        this.setError(false);
-                    },
-                    getUser: function () {
-                        return user;
-                    },
-                    getRole: function () {
-                        return role;
-                    },
-                    isAuthenticated: function () {
-                        return user ? true : false;
-                    },
-                    setError: function (newError) {
-                        error = newError;
-                    },
-                    getError: function () {
-                        return error;
-                    },
-                    isError: function () {
-                        return error ? true : false;
-                    }
-				}
-			}
-		}
-	}).
-    */
+
     factory('Login', ['Resource', function (Resource) {
         return Resource('login');
     }]).
@@ -49,15 +10,14 @@ angular.module('LoginModule',[]).
             var user = $scope.user;
             Login.post({login: user.name, password: user.password}).then(
                 function (response) {
-					console.log(response);
-                    if (response.error) {
-                        Credentials.setError(response.error);
-                        console.log(Credentials.getError());
-                    } else {
-                        Credentials.setUser(response.data.user, response.data.role);
-						// hier moet later meer komen
-                        $location.path(Language.getLanguage());
-                    }
+					if (response.status === 401) {
+						console.log('error');
+					} else {
+						Credentials.setUser(response.data.user, response.data.role);
+						Credentials.saveToSession();
+						console.log(sessionStorage);
+						$location.path(Language.getLanguage());
+					}
                 }
             );
         };

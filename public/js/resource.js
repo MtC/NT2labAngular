@@ -13,13 +13,14 @@ angular.module('ResourceModule',[]).
 			$get: function () {
 				return {
 					getHeaders: function () {
-						var headers = { token: oCredentials.token };
-						if (oCredentials.xsrf !== 'null') headers.xsrf = oCredentials.xsrf;
+						var headers = {};
+						if (oCredentials.token) headers.token = oCredentials.token;
+						if (oCredentials.xsrf) headers['X-XSRF-TOKEN'] = oCredentials.xsrf;
 						return headers;
 					},
 					setHeaders: function (headers) {
-						oCredentials.token   = headers.token;
-                        oCredentials.xsrf    = headers.xsrf || false;
+						oCredentials.token   = headers('token') || false;
+                        oCredentials.xsrf    = headers('X-XSRF-TOKEN') || false;
 						oCredentials.save();
 					}
 				}
@@ -27,7 +28,7 @@ angular.module('ResourceModule',[]).
 		}
 	}).
 
-    factory('Resource', ['$http', 'Token', 'XSRF', 'Headers', function ($http, Token, XSRF, Headers) {
+    factory('Resource', ['$http', 'Headers', function ($http, Headers) {
 		return function (rest) {
 			var urlBase		= '/public/api/' + rest,
 				urlId,
@@ -49,12 +50,16 @@ angular.module('ResourceModule',[]).
 			Resource.query = function () {
 				return $http.get(
                     urlBase, {
-					headers: this.getHeaders()
-				}).then(function (response) {
-					Token.set(response.headers('token'));
-                    console.log(response);
-					return response;
-				});
+					headers: Resource.getHeaders()
+				}).then(
+					function (response) {
+						Resource.setHeaders(response.headers);
+						return response;
+					},
+					function (response) {
+						
+					}
+				);
 			};
             
             Resource.get = function (params) {
@@ -62,32 +67,27 @@ angular.module('ResourceModule',[]).
 				return $http.get(
                     url, 
                     JSON.stringify(params), {
-					headers: {'token': Token.get()}
-				}).then(function (response) {
-					if (response.headers('request') && response.headers('request') === 'credentials') {
-						console.log('credentials asked');
+					headers: Resource.getHeaders()
+				}).then(
+					function (response) {
+						Resource.setHeaders(response.headers);
+						return response;
+					},
+					function (response) {
+						
 					}
-					Token.set(response.headers('token'));
-					if (response.headers('X-XSRF-TOKEN')) { 
-                        XSRF.set(response.headers('X-XSRF-TOKEN'));
-					}
-					return response;
-				});
+				);
 			};
 				
 			Resource.post = function (params) {
 				return $http.post(
                     urlBase,
 					JSON.stringify(params), {
-					headers: {'token': Token.get(), 'X-XSRF-TOKEN': XSRF.get()}
+					headers: Resource.getHeaders()
 				}).then(
 					function (response) {
-						Token.set(response.headers('token'));
-						if (response.headers('X-XSRF-TOKEN')) { 
-							XSRF.set(response.headers('X-XSRF-TOKEN'));
-						}
-						resp = response;
-						resp.error = false;
+						Resource.setHeaders(response.headers);
+						return response;
 						return resp;
 					},
 					function (response) {
@@ -100,19 +100,23 @@ angular.module('ResourceModule',[]).
 				url = urlBase + '/' + urlId;
 				return $http.put(url, 
 					JSON.stringify(params), {
-					headers: {'token': Token.get(), 'X-XSRF-TOKEN': XSRF.get()}
+					headers: Resource.getHeaders()
 					
 				}).then(
 					function (response) {
-						Token.set(response.headers('token'));
+						Resource.setHeaders(response.headers);
 						return response;
-					});
+					},
+					function (response) {
+						
+					}
+				);
 			};
 			
 			return Resource;
 		}
-	}]).
-	
+	}]);
+	/*
 	factory('Token', function() {
 		var Token = {},
 			sToken;
@@ -143,3 +147,4 @@ angular.module('ResourceModule',[]).
 		};	
 		return XSRF;
 	});
+	*/

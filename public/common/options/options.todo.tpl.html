@@ -8,31 +8,28 @@
     <table width="100%">
         <thead>
             <tr>
-                <th align="left" width="5%">
-                    <i class="fa fa-1x fa-square-o"></i>
-                </th>
+                <th align="left" width="5%"><i class="fa fa-1x fa-exclamation-circle" ng-click="filterField"></i></th>
                 <th align="left" ng-click="sortBy('name')">{{'todo.list.todo' | translate}}</th>
-                <!--<th align="left" ng-click="sortBy('added')" width="15%">{{'todo.list.added' | translate}}</th>-->
-                <th align="left" ng-click="sortBy('doneBy')" width="15%">{{'todo.list.done_by' | translate}}</th>
-                <th align="left" width="5%"><i class="fa fa-1x fa-exclamation-circle"></i></th>
+                <th align="left" ng-click="sortBy('done_by')" width="15%">{{'todo.list.done_by' | translate}}</th>
+                <th align="left" width="5%" ng-click="filterField"><i class="fa fa-1x fa-square-o"></i></th>
             </tr>
         </thead>
-        <tbody ng-repeat="todo in todos | orderBy:sortField:reverse | filter:searchForName">
+        <tbody ng-repeat="todo in todos | orderBy:sortField:sortFieldReverse | filter:SearchForName">
             <tr>
-                <td>
-                    <span ng-click="todoOnOff(todo, 'done')">
-                        <i ng-hide="todo.done" class="fa fa-1x fa-square-o"></i>
-                        <i ng-show="todo.done" class="fa fa-1x fa-check-square-o"></i>
-                    </span>
-                </td>
-                <td ng-click="toggleTodo($index)"><span class="todoLink">{{todo.name}}</span></td>
-                <td>{{todo.done_by | date:dater()}}</td>
                 <td>
                     <span ng-click="todoOnOff(todo, 'priority')">
                         <i ng-hide="todo.priority" class="fa fa-1x fa-circle-o"></i>
                         <i ng-show="todo.priority" class="fa fa-1x fa-exclamation-circle"></i>
                     </span>
                 </td>               
+                <td ng-click="toggleTodo($index)"><span class="todoLink">{{todo.name}}</span></td>
+                <td>{{todo.done_by | date:dater()}}</td>
+                <td>
+                    <span ng-click="todoOnOff(todo, 'done')">
+                        <i ng-hide="todo.done" class="fa fa-1x fa-square-o"></i>
+                        <i ng-show="todo.done" class="fa fa-1x fa-check-square-o"></i>
+                    </span>
+                </td>
             </tr>
             <tr ng-show="isToggledTodo($index)">
                 <td></td>
