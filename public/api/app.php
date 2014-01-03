@@ -2,6 +2,8 @@
 
 require '../../config.php';
 require '../../Slim/Slim.php';
+require '../../Slim/Middleware.php';
+require '../../Slim/Middleware/Tokenizer.php';
 require '../../RedBean/rb.php';
 //require '../../Persona/Persona.php';
 
@@ -16,9 +18,16 @@ R::freeze(true);
 $app = new \Slim\Slim([
     'debug' => true
 ]);
+$app->add(new \Tokenizer());
+
+$app->get('/token', function () use ($app) {
+    $response = $app->environment()['user'] ? ['role' => $app->environment()['user']->role, 'id' => $app->environment()['user']->id] : ['mies' => 'zegt pech'];
+    echo json_encode($response);
+});
 
 class ResourceNotFoundException extends Exception {}
 
+/*
 function getTitleFromUrl($url) {
     preg_match('/<title>(.+)<\/title>/', file_get_contents($url), $matches);
 
@@ -45,7 +54,7 @@ function returnResult($action, $success = true, $id = 0) {
         'id' => intval($id),
     ]);
 }
-
+*/
 //routegroups
 
 function crypto_rand_secure($min, $max) {
@@ -140,7 +149,8 @@ function logout () {
 }
 
 function returnCall($response, $loginout = false) {
-    $app = \Slim\Slim::getInstance();  
+    $app = \Slim\Slim::getInstance();
+    /*
     if (!$loginout) {
         if (null !== $app->request()->headers('token')) {
             $token = update();
@@ -160,6 +170,7 @@ function returnCall($response, $loginout = false) {
         $app->response()->header('X-XSRF-TOKEN', 'null');
     }
     $app->response()->header('token', $token);
+    */
     $app->response()->header('Content-Type', 'application/json');
     echo json_encode($response);
 }

@@ -73,6 +73,9 @@ angular.module('MtClab',['ngRoute','Directives', 'TokenModule'/*,'SecurityModule
 		}
 		
 		$rootScope.rootScopeOn = function (event, current, previous) {
+			console.log('$route: ', current);
+			console.warn('$route: ', previous);
+			console.info('$route: ', event);
 			$translate.uses(Language.getLanguage());
 			if (typeof(current.params.option) !== 'undefined') {
 				current.params.option = Navigation.getItem(current.params.option);//translations[current.params.option];
