@@ -79,6 +79,7 @@ angular.module('MtClab',['ngRoute','Directives', 'TokenModule'/*,'SecurityModule
 				if (typeof(current.params.action) !== 'undefined') {
 					current.params.action = Navigation.getItem(current.params.action);//translations[current.params.action];
 				}
+				console.log(current.params);
 			}
 		}
 
@@ -98,6 +99,20 @@ angular.module('MtClab',['ngRoute','Directives', 'TokenModule'/*,'SecurityModule
 			}).
 			
 			when('/:lang/:option/:action', {
+				templateUrl: function(url) {
+					console.log(url);
+					if (!Language.getLanguage() || Language.getLanguage() !== url.lang) {
+						$location.path( url.lang );
+					} else {               
+						url.url     = 'common/' + url.option + '/' + url.option + '.' + url.action + '.tpl.html';
+						tempCtrl 	= php.ucfirst(url.action) + 'Ctrl';
+					}
+					return url.url;
+				},
+				controller: tempCtrl
+			}).
+			
+			when('/:lang/:option/:action/:id', {
 				templateUrl: function(url) {
 					console.log(url);
 					if (!Language.getLanguage() || Language.getLanguage() !== url.lang) {

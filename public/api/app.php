@@ -182,6 +182,16 @@ $app->get('/todo', function () use ($app) {
     returnCall($_oDB);
 });
 
+$app->get('/todo/:id', function ($id) use ($app) {
+    try {
+        $_oDB = R::findOne('todo', 'id=?', [$id]);
+        returnCall(R::exportAll($_oDB));
+    } catch (Exception $e) {
+        $app->response()->status(400);
+        $app->response()->header('X-Status-Reason', $e->getMessage());
+    }
+});
+
 $app->get('/app/:id', function ($id) use ($app) {    
     try {
         $_oDB = R::findOne('apps', 'id=?', array($id));
@@ -244,7 +254,8 @@ $app->get('/lang/:lang', function ($lang) use ($app) {
             'login.form.name' => 'name',
             'login.form.password' => 'password',
             'login.form.submit' => 'submit',
-            'error.bad-request' => 'wrong credentials'],
+            'error.bad-credentials' => 'wrong credentials',
+            'error.bad-request' => 'unknown request'],
         'nl'        => [
             'lang' => 'nl',
             'index.index' => 'Home',
@@ -289,7 +300,8 @@ $app->get('/lang/:lang', function ($lang) use ($app) {
             'login.persona.button' => 'inloggen met Persona',
             'login.persona.explanation' => '',
             'menu.logout.name' => 'uitloggen',
-            'error.bad-request' => 'inlognaam of wachtwoord incorrect']
+            'error.bad-credentials' => 'inlognaam of wachtwoord incorrect',
+            'error.bad-request' => 'onbekend verzoek']
     ];
     
     if (in_array($lang, $langs['options'])) {
@@ -349,7 +361,8 @@ $app->get('/menu', function () use ($app) {
                 'menu.login.url'        => 'login',
                 'options.todo.url'      => 'todo',
                 'options.language.url'  => 'language-choice',
-                'todo.form.url'         => 'add-todo'
+                'todo.form.url'         => 'add-todo',
+                'todo.form-change.url'  => 'todo-change'
             ],
             'nl' => [
                 'menu.app.url'          => 'apps',
@@ -358,7 +371,8 @@ $app->get('/menu', function () use ($app) {
                 'menu.login.url'        => 'inlog',
                 'options.todo.url'      => 'taken',
                 'options.language.url'  => 'taalkeuze',
-                'todo.form.url'         => 'taak-toevoegen'
+                'todo.form.url'         => 'taak-toevoegen',
+                'todo.form-change.url'  => 'taak-aanpassen'
             ]
          ],
          'urlToMenu'    => [
@@ -368,7 +382,8 @@ $app->get('/menu', function () use ($app) {
             'menu.login.url'        => 'login',
             'options.todo.url'      => 'todo',
             'options.language.url'  => 'language',
-            'todo.form.url'         => 'todo-add'
+            'todo.form.url'         => 'todo-add',
+            'todo.form-change.url'  => 'todo-change'
          ]
     ];
     foreach($return['urlToLanguage'] as $key => $value) {
@@ -487,37 +502,35 @@ $app->put('/todo/:id', function ($id) use ($app) {
     $body = $request->getBody();
     $input = json_decode($body);
     
-    if($input->action == 'priority') {
+    if (isset($input->action)) {
+        if($input->action == 'priority') {
+            $_oDB = \R::load('todo',$id);
+            $_oDB->priority   = $_oDB->priority == 0 ? 1 : 0;
+            \R::store($_oDB);    
+            $_sResponse = ['priority' => $_oDB->priority];
+            returnCall($_sResponse);
+        } else if($input->action == 'done') {   
+            $_oDB = \R::load('todo',$id);
+            $_oDB->done   = $_oDB->done == 0 ? 1 : 0;
+            \R::store($_oDB);  
+            $_sResponse = ['done' => $_oDB->done];
+            returnCall($_sResponse);
+        } else if($input->action == 'removed') {   
+            $_oDB = \R::load('todo',$id);
+            $_oDB->removed   = 1;
+            \R::store($_oDB);
+            $_sResponse = ['removed' => 1];
+            returnCall($_sResponse);
+        }
+    } else {
         $_oDB = \R::load('todo',$id);
-        $_oDB->priority   = $_oDB->priority == 0 ? 1 : 0;
-        \R::store($_oDB);
-
-        $_sResponse = ['priority' => $_oDB->priority];
-        //$app->response()->header('Content-Type', 'application/json');
-        //echo json_encode($_sResponse);
-        returnCall($_sResponse);
-    } 
-    
-    else if($input->action == 'done') {   
-        $_oDB = \R::load('todo',$id);
-        $_oDB->done   = $_oDB->done == 0 ? 1 : 0;
-        \R::store($_oDB);
-
-        $_sResponse = ['done' => $_oDB->done];
-        //$app->response()->header('Content-Type', 'application/json');
-        //echo json_encode($_sResponse);
-        returnCall($_sResponse);
-    }
-
-    else if($input->action == 'removed') {   
-        $_oDB = \R::load('todo',$id);
-        $_oDB->removed   = 1;
-        \R::store($_oDB);
-
-        $_sResponse = ['removed' => 1];
-        //$app->response()->header('Content-Type', 'application/json');
-        //echo json_encode($_sResponse);
-        returnCall($_sResponse);
+        $_oDB->name         = $input->todo;
+        $_oDB->description  = $input->description;
+        $_oDB->priority     = $input->priority;
+        $_oDB->done_by      = $input->doneBy;
+        \R::store($_oDB); 
+        $_sResponse = ['changed' => 1];
+        returnCall($_sResponse);   
     }
 });
 

@@ -18,8 +18,6 @@ angular.module('OptionsModule',[]).
         $scope.todos = [];
         $scope.toggled = [];
         $scope.sortField = 'done_by';
-        $scope.todoAddSubmit = true;
-        $scope.toDo = {priority: false};
         
         $scope.isToggledTodo = function (index) {
             return $scope.toggled[index];
@@ -47,15 +45,6 @@ angular.module('OptionsModule',[]).
 			}
 		}
         
-        $scope.checkboxed = function () {
-            $scope.toDo.priority = !$scope.toDo.priority
-        }
-        
-        $scope.resetForm = function () {
-            $scope.toDo = {priority: false};
-            $scope.formTodo.$setPristine()
-        }
-        
         $scope.go = function ( path ) {
 			Navigation.go( path );
 		};
@@ -65,19 +54,9 @@ angular.module('OptionsModule',[]).
         });
        
         $scope.changeTodo = function (todo) {
-			console.log('test');
-			Navigation.go(Navigation.getLanguage() + '/' + Navigation.getMenuItem('menu.options.url') + '/' + Navigation.getMenuItem('options.todo.change-todo'));
+			console.log(todo.id);
+			Navigation.go(Navigation.getLanguage() + '/' + Navigation.getMenuItem('menu.options.url') + '/' + Navigation.getMenuItem('todo.form-change.url') + '/' + todo.id);
 		};
-        
-        $scope.addTodo = function (todo) {
-            console.log(todo);
-            ToDo.post(todo).then(function (todo) {
-                console.log(todo);
-                //$scope.todos.push(todo.data[0]);
-                //$scope.todoAddSubmit = false;
-				Navigation.go(Navigation.getLanguage() + '/' + Navigation.getMenuItem('menu.options.url') + '/' + Navigation.getMenuItem('options.todo.url'));
-            });
-        };
         
         $scope.todoOnOff = function (todo, action) {
             ToDo.setId(todo.id);
@@ -94,11 +73,7 @@ angular.module('OptionsModule',[]).
                     $scope.todos[$scope.todos.indexOf(todo)].done = response.data.done;
                 });
             }
-        };
-
-        $scope.canSave = function () {
-            return $scope.formTodo.$valid;
-        };
+        };     
     }]).
 	
 	controller('LanguageCtrl',['$scope', 'Navigation', function ($scope, Navigation) {
@@ -107,4 +82,69 @@ angular.module('OptionsModule',[]).
 			console.log('/' + lang + '/' + Navigation.getMenuItem('menu.options.url') + '/' + Navigation.getMenuItem('options.todo.url'));
 			Navigation.go('/' + lang + '/' + Navigation.getMenuItem('menu.options.url') + '/' + Navigation.getMenuItem('options.language.url'));
 		}
+	}]).
+	
+	controller('formTodoCtrl',['$scope', '$routeParams', 'ToDo', 'Navigation', function ($scope, $routeParams, ToDo, Navigation) {
+		$scope.toDo = {priority: false};
+		
+		console.log($routeParams);
+		
+		if ($routeParams.id) {
+			$scope.todoAddSubmit = false;
+			ToDo.setId($routeParams.id);
+			ToDo.get().then(function (response) {
+				if (response.status !== 200) {
+					$scope.error = true;
+				} else {
+					$scope.error = false;
+					var td = response.data[0];
+					$scope.toDo = {
+						id:			td.id,
+						todo:		td.name,
+						doneBy:		td.done_by,
+						description:td.description,
+						priority:	td.priority === '0' ? false : true
+					}
+					$scope.td = angular.copy($scope.toDo);
+				}
+			});
+		} else {
+			$scope.todoAddSubmit = true;
+		}
+		
+		$scope.checkboxed = function () {
+            $scope.toDo.priority = !$scope.toDo.priority
+        }
+		
+		$scope.resetForm = function () {
+            $scope.toDo = {priority: false};
+            if ($scope.td) {
+				$scope.toDo = {
+					todo:		$scope.td.todo,
+					doneBy:		$scope.td.doneBy,
+					description:$scope.td.description,
+					priority:	$scope.td.priority
+				}
+            } else {
+				$scope.formTodo.$setPristine();
+            }
+        }
+		
+		$scope.addTodo = function (todo) {
+            ToDo.post(todo).then(function (todo) {
+				Navigation.go(Navigation.getLanguage() + '/' + Navigation.getMenuItem('menu.options.url') + '/' + Navigation.getMenuItem('options.todo.url'));
+            });
+        };
+		
+		$scope.changeTodo = function (todo) {
+			ToDo.setId(todo.id);
+            ToDo.put(todo).then(function (response) {
+				console.log(response);
+				Navigation.go(Navigation.getLanguage() + '/' + Navigation.getMenuItem('menu.options.url') + '/' + Navigation.getMenuItem('options.todo.url'));
+            });
+        };
+		
+		$scope.canSave = function () {
+            return $scope.formTodo.$valid;
+        };
 	}]);

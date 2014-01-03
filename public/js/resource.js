@@ -31,7 +31,7 @@ angular.module('ResourceModule',[]).
     factory('Resource', ['$http', 'Headers', function ($http, Headers) {
 		return function (rest) {
 			var urlBase		= '/public/api/' + rest,
-				urlId,
+				urlId		= false,
 				Resource = function (data) {
 					angular.extend(this, data);
 				};
@@ -74,7 +74,7 @@ angular.module('ResourceModule',[]).
 						return response;
 					},
 					function (response) {
-						
+						return response;
 					}
 				);
 			};
@@ -98,17 +98,17 @@ angular.module('ResourceModule',[]).
 			
 			Resource.put = function (params) {
 				url = urlBase + '/' + urlId;
-				return $http.put(url, 
+				return $http.put(
+					url, 
 					JSON.stringify(params), {
-					headers: Resource.getHeaders()
-					
+					headers: Resource.getHeaders()	
 				}).then(
 					function (response) {
 						Resource.setHeaders(response.headers);
 						return response;
 					},
 					function (response) {
-						
+						return response;
 					}
 				);
 			};
