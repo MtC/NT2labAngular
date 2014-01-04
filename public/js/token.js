@@ -13,7 +13,7 @@ angular.module('TokenModule',[]).
                 role:   false,
                 save:   function () {
                     if (bSessionStorage) {
-                        sessionStorage.setItem('credentials',JSON.stringify(oCredentials))
+                        sessionStorage.setItem('credentials',JSON.stringify(oCredentials));
                     }
                 }
             };
@@ -68,6 +68,9 @@ angular.module('TokenModule',[]).
 						if (bSessionStorage) {
 							sessionStorage.setItem('credentials',JSON.stringify(oCredentials))
 						}
+					},
+					getCredentials: function () {
+						return oCredentials;
 					}
 				};
 			}

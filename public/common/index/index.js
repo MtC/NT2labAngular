@@ -9,7 +9,7 @@ angular.module('IndexModule',[]).
     }]).
 
     controller('IndexCtrl', ['$scope', '$route', '$translate', 'Trial', 'Language', 'Index', 'Credentials', function($scope, $route, $translate, Trial, Language, Index, Credentials) {
-        console.log('indexpagina bereikt');
+        //console.log(sessionStorage.getItem('credentials'));
         /*
         if (Language.getLanguage() !== $route.current.pathParams.lang || Language.isReload()) {
             console.log('t');

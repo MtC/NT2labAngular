@@ -56,7 +56,7 @@ angular.module('MtClab',['ngRoute','Directives', 'TokenModule'/*,'SecurityModule
 		$rootScope.afterLanguage = function () {
 			$translate.uses(Language.getLanguage());
 			$rootScope.$on( "$routeChangeStart", function(event, current, previous) {
-				console.log(current.params);
+				//console.log(current.params);
 				if (current.params.lang !== Language.getLanguage()) {
 					LanguageFactory.setId(current.params.lang);
 					LanguageFactory.get().then(function (response) {
@@ -73,16 +73,14 @@ angular.module('MtClab',['ngRoute','Directives', 'TokenModule'/*,'SecurityModule
 		}
 		
 		$rootScope.rootScopeOn = function (event, current, previous) {
-			console.log('$route: ', current);
-			console.warn('$route: ', previous);
-			console.info('$route: ', event);
+			//console.log('oMenu', Navigation.getMenu());
 			$translate.uses(Language.getLanguage());
 			if (typeof(current.params.option) !== 'undefined') {
 				current.params.option = Navigation.getItem(current.params.option);//translations[current.params.option];
 				if (typeof(current.params.action) !== 'undefined') {
 					current.params.action = Navigation.getItem(current.params.action);//translations[current.params.action];
 				}
-				console.log(current.params);
+				//console.log(current.params);
 			}
 		}
 
@@ -103,7 +101,7 @@ angular.module('MtClab',['ngRoute','Directives', 'TokenModule'/*,'SecurityModule
 			
 			when('/:lang/:option/:action', {
 				templateUrl: function(url) {
-					console.log(url);
+					//console.log(url);
 					if (!Language.getLanguage() || Language.getLanguage() !== url.lang) {
 						$location.path( url.lang );
 					} else {               
@@ -117,7 +115,7 @@ angular.module('MtClab',['ngRoute','Directives', 'TokenModule'/*,'SecurityModule
 			
 			when('/:lang/:option/:action/:id', {
 				templateUrl: function(url) {
-					console.log(url);
+					//console.log(url);
 					if (!Language.getLanguage() || Language.getLanguage() !== url.lang) {
 						$location.path( url.lang );
 					} else {               
@@ -145,6 +143,8 @@ angular.module('MtClab',['ngRoute','Directives', 'TokenModule'/*,'SecurityModule
 		}
 		
 		if (Language.isSessionStorage()) {
+			//tral = sessionStorage;
+			//console.info('storage: ', tral);
 			if (Language.isLanguageInSession()) {
 				var langs = JSON.parse(sessionStorage.getItem('langs'));
 				$translateProviderReference.translations(langs.lang, langs);
@@ -176,9 +176,9 @@ angular.module('MtClab',['ngRoute','Directives', 'TokenModule'/*,'SecurityModule
         }
 
 		$rootScope.logout = function () {
-			console.log(Credentials.getHeaders());
+			//console.log(Credentials.getHeaders());
 			Logout.post().then(function (response) {
-				console.log(sessionStorage);
+				//console.log(sessionStorage);
 				Credentials.setUser(false, false);
 				$location.path('');
 			});

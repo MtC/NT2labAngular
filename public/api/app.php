@@ -5,6 +5,7 @@ require '../../Slim/Slim.php';
 require '../../Slim/Middleware.php';
 require '../../Slim/Middleware/Tokenizer.php';
 require '../../RedBean/rb.php';
+require '../../Mptt/Mptt.php';
 //require '../../Persona/Persona.php';
 
 \Slim\Slim::registerAutoloader();
@@ -15,193 +16,174 @@ require '../../RedBean/rb.php';
 R::setup("mysql:host={$config['host']};dbname={$config['dbname']}", $config['name'], $config['password']);
 R::freeze(true);
 
+$connection = new \PDO("mysql:host={$config['host']};dbname={$config['dbname']}", $config['name'], $config['password']);
+
 $app = new \Slim\Slim([
     'debug' => true
 ]);
 $app->add(new \Tokenizer());
 
-$app->get('/token', function () use ($app) {
-    $response = $app->environment()['user'] ? ['role' => $app->environment()['user']->role, 'id' => $app->environment()['user']->id] : ['mies' => 'zegt pech'];
-    echo json_encode($response);
-});
-
 class ResourceNotFoundException extends Exception {}
 
-/*
-function getTitleFromUrl($url) {
-    preg_match('/<title>(.+)<\/title>/', file_get_contents($url), $matches);
-
-    return mb_convert_encoding($matches[1], 'UTF-8', 'UTF-8');
-}
-
-function getFaviconFromUrl($url) {
-    $url = parse_url($url);
-    $url = urlencode(sprintf('%s://%s', 
-        isset($url['scheme']) ? $url['scheme'] : 'http', 
-        isset($url['host']) ? $url['host'] : strtolower($url['path'])));
-    
-    return "http://g.etfv.co/$url";
-}
-
-function saveFavicon($url, $id) {
-    file_put_contents("../favicons/$id.ico", file_get_contents(getFaviconFromUrl($url)));
-}
-
-function returnResult($action, $success = true, $id = 0) {
-    echo json_encode([
-        'action' => $action,
-        'success' => $success,
-        'id' => intval($id),
-    ]);
-}
-*/
-//routegroups
-
-function crypto_rand_secure($min, $max) {
-        $range = $max - $min;
-        if ($range < 0) return $min; // not so random...
-        $log = log($range, 2);
-        $bytes = (int) ($log / 8) + 1; // length in bytes
-        $bits = (int) $log + 1; // length in bits
-        $filter = (int) (1 << $bits) - 1; // set all lower bits to 1
-        do {
-            $rnd = hexdec(bin2hex(openssl_random_pseudo_bytes($bytes)));
-            $rnd = $rnd & $filter; // discard irrelevant bits
-        } while ($rnd >= $range);
-        return $min + $rnd;
-}
-
-function getToken($length, $isSimple = false){
-    $token = "";
-    $codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    $codeAlphabet.= "abcdefghijklmnopqrstuvwxyz";
-    $codeAlphabet.= "0123456789";
-    $codeAlphabet.= $isSimple ? '' : '&%$#@_';
-    for($i=0;$i<$length;$i++){
-        $token .= $codeAlphabet[crypto_rand_secure(0,strlen($codeAlphabet))];
-    }
-    return $token;
-}
-
-$app->get('/trial', function () use ($app) {
-    $app->response()->header('request', 'credentials');
-    echo json_encode(['trial' => true]);
-    //returnCall(['trial' => true]); 
+/**
+ *  testroutes
+ */
+$app->get('/trial', function () use ($app, $connection) {
+    $mptt = new \Mptt\Mptt($connection);
+    $mptt->createTable('languages');
 });
 
-$app->get('/poging/:name', function ($name) use ($app) {
-    $_user = R::findOne('_users', 'name_canonical=?', [$name]);
-    $_user->token = getToken(30);
-    $_user->token_time = time();
-    $_user->xsrf = $app->request()->headers('X-XSRF-TOKEN');
-    $_id = R::store($_user);
-    echo $_user->token;
-});
-
-function login () {
+/**
+ *  set standard content-type...
+ */
+function returnCall($response) {
     $app = \Slim\Slim::getInstance();
-    $request = $app->request();
-    $body = $request->getBody();
-    $input = json_decode($body);
-    $_name = strtolower($input->login);
-
-    $_user = R::findOne('_users', 'name_canonical=?', [$_name]);
-    $_user->login_time = date("Y-m-d H:i:s", time());
-    $_user->token = getToken(30);
-    $_user->token_time = $_user->login_time;
-    $_user->xsrf = getToken(50);
-    $_id = R::store($_user);
-
-    return ['token' => $_user->token, 'xsrf' => $_user->xsrf];
-}
-
-function update() {
-    $app = \Slim\Slim::getInstance();
-    $request = $app->request();
-    $_token = $app->request()->headers('token');
-
-    $_user = R::findOne('_users', 'token=?', [$_token]);
-    if ($_user) {
-        $_user->token = getToken(30);
-        $_user->token_time = date("Y-m-d H:i:s", time());
-        $_id = R::store($_user);
-        $token = $_user->token;
-    } else {
-        $token = getToken(30);
-    }
-    return $token;
-}
-
-function logout () {
-    $app = \Slim\Slim::getInstance();
-    $request = $app->request();
-    $_token = $app->request()->headers('token');
-    $_xsrf = $app->request()->headers('X-XSRF-TOKEN');
-
-    $_user = R::findOne('_users', 'xsrf=?', [$_xsrf]);
-    $_user->login_time = '0000-00-00 00:00:00';
-    $_user->token = '';
-    $_user->token_time = $_user->login_time;
-    $_user->xsrf = '';
-    $_id = R::store($_user);
-
-    return 'null';
-}
-
-function returnCall($response, $loginout = false) {
-    $app = \Slim\Slim::getInstance();
-    /*
-    if (!$loginout) {
-        if (null !== $app->request()->headers('token')) {
-            $token = update();
-        } else if (isset($response['auth']) && $response['auth']) {
-            //hier moet extra check komen
-            $token = update();
-        } else {
-            $token = getToken(30);      
-        }
-    } else if ($loginout == 'login') {
-        $_response = login();
-        $token = $_response['token'];
-        $app->response()->header('X-XSRF-TOKEN', $_response['xsrf']);
-        
-    } else {
-        $token = logout();
-        $app->response()->header('X-XSRF-TOKEN', 'null');
-    }
-    $app->response()->header('token', $token);
-    */
     $app->response()->header('Content-Type', 'application/json');
     echo json_encode($response);
 }
 
-$app->get('/token/:token', function ($token) {
-    $salt = bin2hex(openssl_random_pseudo_bytes(22));
-    $hash = crypt($token, '$2a$12$'.$salt);
-    echo json_encode(['token' => $hash]);
+function return401 ($e) {
+    $app = \Slim\Slim::getInstance();
+    $app->response()->status(401);
+    $app->response()->header('X-Status-Reason', $e->getMessage());
+    $app->response()->header('WWW-Authenticate', 'FormBased');
+}
+
+/**
+ *  logging in and out
+ */
+$app->post('/login', function () use ($app) {
+    try {
+        if (1 == 1) {
+            returnCall(['response' => 'ok']);
+        } else {
+            throw new Exception($app->environment()['error']);
+        }
+    } catch (Exception $e) {
+        $app->response()->status(400);
+        $app->response()->header('X-Status-Reason', $e->getMessage());
+    }
 });
 
+$app->post('/logout', function () use ($app) {
+    returnCall([], 'logout');
+});
+
+/**
+ *  route: apps
+ */
 $app->get('/app', function () use ($app) {
     $_oDB = R::find('apps');
     $app->response()->header('Content-Type', 'application/json');
     echo json_encode(R::exportAll($_oDB));
 });
 
+/**
+ *  route: todo
+ */
 $app->get('/todo', function () use ($app) {
-    //$_oDB = R::find('todo', 'removed = 0');
-    $_oDB = R::getAll('SELECT * FROM todo WHERE removed = 0');
-    returnCall($_oDB);
+    try {
+        if (isset($app->environment()['user'])) {
+            $_oDB = R::getAll('SELECT id, done, name, priority, done_by, description FROM todo WHERE removed = 0 AND user_id = :user_id', [':user_id' => $app->environment()['user']['id']]);
+            returnCall($_oDB);
+        } else {
+            throw new Exception('not logged in correctly');
+        }
+    } catch (Exception $e) {
+        return401 ($e);
+    }
+    
 });
 
 $app->get('/todo/:id', function ($id) use ($app) {
     try {
-        $_oDB = R::findOne('todo', 'id=?', [$id]);
-        returnCall(R::exportAll($_oDB));
+        if (isset($app->environment()['user'])) {
+            $_oDB = R::getAll('SELECT id, done, name, priority, done_by, description FROM todo WHERE id = :id AND user_id = :user_id', [':id' => $id, ':user_id' => $app->environment()['user']['id']]);
+            returnCall($_oDB);
+        } else {
+            throw new Exception('not logged in correctly');
+        }
     } catch (Exception $e) {
-        $app->response()->status(400);
-        $app->response()->header('X-Status-Reason', $e->getMessage());
+        return401 ($e);
     }
 });
+
+$app->post('/todo', function () use ($app) {    
+    try {
+        if (isset($app->environment()['user'])) {
+            $request = $app->request();
+            $body = $request->getBody();
+            $input = json_decode($body); 
+    
+            $_oDB = \R::dispense('todo');
+            $_oDB->name         = (string)$input->todo;
+            $_oDB->user_id      = $app->environment()['user']->id;
+            $_oDB->description  = isset($input->description) ? $input->description : '';
+            $_oDB->added        = date('Y-m-d',time());
+            $_oDB->priority     = isset($input->priority) ? $input->priority : 0;
+            $_oDB->done_by      = $input->doneBy;
+            $id = \R::store($_oDB);    
+            
+            returnCall(['message' => 'added todo']);
+        } else {
+            throw new Exception('not logged in correctly');
+        }
+    } catch (Exception $e) {
+        return401 ($e);
+    }
+});
+
+$app->put('/todo/:id', function ($id) use ($app) {
+    try {
+        if (isset($app->environment()['user'])) {
+            $request = $app->request();
+            $body = $request->getBody();
+            $input = json_decode($body);
+            
+            if (isset($input->action)) {
+                if($input->action == 'priority') {
+                    $_oDB = \R::load('todo',$id);
+                    $_oDB->priority   = $_oDB->priority == 0 ? 1 : 0;
+                    \R::store($_oDB);    
+                    $_sResponse = ['priority' => $_oDB->priority];
+                    returnCall($_sResponse);
+                } else if($input->action == 'done') {   
+                    $_oDB = \R::load('todo',$id);
+                    $_oDB->done   = $_oDB->done == 0 ? 1 : 0;
+                    \R::store($_oDB);  
+                    $_sResponse = ['done' => $_oDB->done];
+                    returnCall($_sResponse);
+                } else if($input->action == 'removed') {   
+                    $_oDB = \R::load('todo',$id);
+                    $_oDB->removed   = 1;
+                    \R::store($_oDB);
+                    $_sResponse = ['removed' => 1];
+                    returnCall($_sResponse);
+                }
+            } else {
+                $_oDB = \R::load('todo',$id);
+                $_oDB->name         = $input->todo;
+                $_oDB->description  = $input->description;
+                $_oDB->priority     = $input->priority;
+                $_oDB->done_by      = $input->doneBy;
+                \R::store($_oDB); 
+                $_sResponse = ['changed' => 1];
+                returnCall($_sResponse);   
+            }
+        } else {
+            throw new Exception('not logged in correctly');
+        }
+    } catch (Exception $e) {
+        return401 ($e);
+    }
+});
+
+/**
+ *  route: language and menu
+ */
+
+
+
 
 $app->get('/app/:id', function ($id) use ($app) {    
     try {
@@ -221,6 +203,7 @@ $app->get('/app/:id', function ($id) use ($app) {
 });
 
 $app->get('/lang/:lang', function ($lang) use ($app) {
+    /*
     $langs = [
         'options'   => ['en','nl'],
         'en'        => [
@@ -345,12 +328,18 @@ $app->get('/lang/:lang', function ($lang) use ($app) {
     $url['options.todo.url'] = $langs[$lang]['options.todo.url'];
     $url['options.language.url'] = $langs[$lang]['options.language.url'];
     $url['todo.form.url'] = $langs[$lang]['todo.form.url'];
+    */
     
-    
-    $return['urlCheck'] = $menu;
-    $return['url'] = $url;
+    $_language = R::find('languages', 'language = :language AND type = :type', [':language' => $lang, ':type' => 'text']);
+    foreach ($_language as $object) {
+        $return[$object->title] = $object->text;
+    }
+    //$return['urlCheck'] = $menu;
+    //$return['url'] = $url;
     //$app->response()->header('Content-Type', 'application/json');
     //echo \json_encode($return);
+    
+    //returnCall($return);
     returnCall($return);
     
     /*
@@ -421,9 +410,6 @@ $app->post('/app', function () use ($app) {
         $_oDB->category_id  = (string)$input->category_id;
         $id = \R::store($_oDB);    
 
-        // return JSON-encoded response body
-        //$app->response()->header('Content-Type', 'application/json');
-        //echo json_encode(R::exportAll($_oDB));
         returnCall($_oDB);
     } catch (Exception $e) {
         $app->response()->status(400);
@@ -431,34 +417,6 @@ $app->post('/app', function () use ($app) {
     }
 });
 
-$app->post('/login', function () use ($app) {
-    $_request = $app->request();
-    $_body = $_request->getBody();
-    $_input = json_decode($_body);
-    
-    $_name = strtolower($_input->login);
-    
-    try {
-        $_oDB = R::findOne('_users', 'name_canonical=?', [$_name]);
-        if ($_oDB) {
-            $_hash = $_oDB->password;
-            if (crypt($_input->password, $_hash) == $_hash) {
-                returnCall(['user' => $_oDB->name, 'role' => $_oDB->role], 'login');
-            } else {
-                throw new Exception('unknown user or password');
-            }
-        } else {
-            throw new Exception('unknown user or password');
-        }
-    } catch (Exception $e) {
-        $app->response()->status(400);
-        $app->response()->header('X-Status-Reason', $e->getMessage());
-    }
-});
-
-$app->post('/logout', function () use ($app) {
-    returnCall([], 'logout');
-});
 /*
 $app->post('/persona/:action', function ($action) use ($app) {
     $request = $app->request();
@@ -484,66 +442,9 @@ $app->post('/persona/:action', function ($action) use ($app) {
     echo json_encode($response);
 });
 */
-$app->post('/todo', function () use ($app) {    
-    try {
-        // get and decode JSON request body
-        $request = $app->request();
-        $body = $request->getBody();
-        $input = json_decode($body); 
 
-        // store article record
-        $_oDB = \R::dispense('todo');
-        $_oDB->name         = (string)$input->todo;
-        $_oDB->description  = isset($input->description) ? $input->description : '';
-        $_oDB->added        = date('Y-m-d',time());
-        $_oDB->priority     = isset($input->priority) ? $input->priority : 0;
-        $_oDB->done_by      = $input->doneBy;
-        $id = \R::store($_oDB);    
-        
-        $_oDB = R::getAll('SELECT * FROM todo WHERE id = ?', [$id]);
-        returnCall($_oDB);
-    } catch (Exception $e) {
-        $app->response()->status(400);
-        $app->response()->header('X-Status-Reason', $e->getMessage());
-    }
-});
 
-$app->put('/todo/:id', function ($id) use ($app) {
-    $request = $app->request();
-    $body = $request->getBody();
-    $input = json_decode($body);
-    
-    if (isset($input->action)) {
-        if($input->action == 'priority') {
-            $_oDB = \R::load('todo',$id);
-            $_oDB->priority   = $_oDB->priority == 0 ? 1 : 0;
-            \R::store($_oDB);    
-            $_sResponse = ['priority' => $_oDB->priority];
-            returnCall($_sResponse);
-        } else if($input->action == 'done') {   
-            $_oDB = \R::load('todo',$id);
-            $_oDB->done   = $_oDB->done == 0 ? 1 : 0;
-            \R::store($_oDB);  
-            $_sResponse = ['done' => $_oDB->done];
-            returnCall($_sResponse);
-        } else if($input->action == 'removed') {   
-            $_oDB = \R::load('todo',$id);
-            $_oDB->removed   = 1;
-            \R::store($_oDB);
-            $_sResponse = ['removed' => 1];
-            returnCall($_sResponse);
-        }
-    } else {
-        $_oDB = \R::load('todo',$id);
-        $_oDB->name         = $input->todo;
-        $_oDB->description  = $input->description;
-        $_oDB->priority     = $input->priority;
-        $_oDB->done_by      = $input->doneBy;
-        \R::store($_oDB); 
-        $_sResponse = ['changed' => 1];
-        returnCall($_sResponse);   
-    }
-});
+
 
 $app->delete('/todo/:id', function ($id) use ($app) {
     $_oDB = \R::load('todo',$id);

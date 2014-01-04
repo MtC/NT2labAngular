@@ -10,13 +10,12 @@ angular.module('LoginModule',[]).
             var user = $scope.user;
             Login.post({login: user.name, password: user.password}).then(
                 function (response) {
-					if (response.status === 401) {
+					if (response.status === 400) {
 						console.log('error');
 					} else {
-						Credentials.setUser(response.data.user, response.data.role);
-						Credentials.saveToSession();
-						console.log(sessionStorage);
-						$location.path(Language.getLanguage());
+						if (Credentials.isAuthenticated()) {
+							$location.path(Language.getLanguage());
+						}
 					}
                 }
             );

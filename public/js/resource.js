@@ -14,13 +14,17 @@ angular.module('ResourceModule',[]).
 				return {
 					getHeaders: function () {
 						var headers = {};
-						if (oCredentials.token) headers.token = oCredentials.token;
-						if (oCredentials.xsrf) headers['X-XSRF-TOKEN'] = oCredentials.xsrf;
+						if (oCredentials.token) headers['X-Token'] = oCredentials.token;
+						if (oCredentials.xsrf) headers['X-Xsrf-Token'] = oCredentials.xsrf;
+						console.log('getHeaders: ', headers);
 						return headers;
 					},
 					setHeaders: function (headers) {
-						oCredentials.token   = headers('token') || false;
-                        oCredentials.xsrf    = headers('X-XSRF-TOKEN') || false;
+						oCredentials.token   = headers('X-Token') || false;
+                        oCredentials.xsrf    = headers('X-Xsrf-Token') || false;
+						if (headers('X-User')) oCredentials.user    = headers('X-User');
+						if (headers('X-Role')) oCredentials.role    = headers('X-Role');
+						console.log('setHeaders: ', oCredentials);
 						oCredentials.save();
 					}
 				}
@@ -62,11 +66,10 @@ angular.module('ResourceModule',[]).
 				);
 			};
             
-            Resource.get = function (params) {
+            Resource.get = function () {// kijken of ik toch een 'params' en een JSON.stringify(params) kan inpassen
                 url = urlBase + '/' + urlId;
 				return $http.get(
-                    url, 
-                    JSON.stringify(params), {
+                    url, {
 					headers: Resource.getHeaders()
 				}).then(
 					function (response) {
