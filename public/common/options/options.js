@@ -55,7 +55,7 @@ angular.module('OptionsModule',[]).
        
         $scope.changeTodo = function (todo) {
 			console.log(todo.id);
-			Navigation.go(Navigation.getLanguage() + '/' + Navigation.getMenuItem('menu.options.url') + '/' + Navigation.getMenuItem('todo.form-change.url') + '/' + todo.id);
+			Navigation.go(Navigation.getLanguage() + '/' + Navigation.getMenuItem('url.options') + '/' + Navigation.getMenuItem('url.options.todo.form-change') + '/' + todo.id);
 		};
         
         $scope.todoOnOff = function (todo, action) {
@@ -79,8 +79,7 @@ angular.module('OptionsModule',[]).
 	controller('LanguageCtrl',['$scope', 'Navigation', function ($scope, Navigation) {
 		$scope.go = function (lang) {
 			Navigation.setLanguage(lang);
-			console.log('/' + lang + '/' + Navigation.getMenuItem('menu.options.url') + '/' + Navigation.getMenuItem('options.todo.url'));
-			Navigation.go('/' + lang + '/' + Navigation.getMenuItem('menu.options.url') + '/' + Navigation.getMenuItem('options.language.url'));
+			Navigation.go('/' + lang + '/' + Navigation.getMenuItem('url.options') + '/' + Navigation.getMenuItem('url.options.language'));
 		}
 	}]).
 	
@@ -132,7 +131,7 @@ angular.module('OptionsModule',[]).
 		
 		$scope.addTodo = function (todo) {
             ToDo.post(todo).then(function (todo) {
-				Navigation.go(Navigation.getLanguage() + '/' + Navigation.getMenuItem('menu.options.url') + '/' + Navigation.getMenuItem('options.todo.url'));
+				Navigation.go(Navigation.getLanguage() + '/' + Navigation.getMenuItem('url.options') + '/' + Navigation.getMenuItem('url.options.todo'));
             });
         };
 		

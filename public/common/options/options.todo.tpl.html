@@ -1,7 +1,7 @@
 <section ng-controller="TodoCtrl" ng-cloak>
     <h1>{{'todo.list.title' | translate}}</h1>
     <p> 
-        <a class="button" href="#!/{{'lang' | translate}}/{{'menu.options.url' | translate}}/{{'todo.form.url' | translate}}"><i class="fa fa-plus-square fa-1x fa-fw"></i>{{'todo.list.add' | translate}}</a>    
+        <a class="button" href="#!/{{'lang' | translate}}/{{'url.options' | translate}}/{{'url.options.todo.form-add' | translate}}"><i class="fa fa-plus-square fa-1x fa-fw"></i>{{'todo.list.add' | translate}}</a>    
         <span class="empty" ng-hide="todos.length > 0"> {{'todo.list.nothingToDo' | translate}}</span>
     </p>
     <p ng-show="todos.length > 0"><input type="search" ng-model="searchForName" /></p>
